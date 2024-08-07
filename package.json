@@ -3,24 +3,48 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.4"
+    "@heroicons/react": "^2.1.5",
+    "@lexical/code": "^0.17.0",
+    "@lexical/link": "^0.17.0",
+    "@lexical/list": "^0.17.0",
+    "@lexical/react": "^0.17.0",
+    "@lexical/rich-text": "^0.17.0",
+    "@lexical/selection": "^0.17.0",
+    "@lexical/utils": "^0.17.0",
+    "@material-tailwind/react": "^2.1.9",
+    "@tiptap/core": "^2.5.8",
+    "@tiptap/extension-blockquote": "^2.5.8",
+    "@tiptap/extension-bold": "^2.5.8",
+    "@tiptap/extension-bullet-list": "^2.5.8",
+    "@tiptap/extension-link": "^2.5.8",
+    "@tiptap/extension-ordered-list": "^2.5.8",
+    "@tiptap/extension-paragraph": "^2.5.8",
+    "@tiptap/extension-placeholder": "^2.5.8",
+    "@tiptap/extension-underline": "^2.5.8",
+    "@tiptap/starter-kit": "^2.5.8",
+    "auth-provider": "^0.6.2",
+    "date-fns": "^3.6.0",
+    "js-cookie": "^3.0.5",
+    "lexical": "^0.17.0",
+    "next": "^14.2.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
-    "@types/react": "^18",
+    "@types/react": "^18.2.42",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.4",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4"
+    "typescript": "^5"
   }
 }

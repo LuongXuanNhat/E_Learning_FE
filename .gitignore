@@ -8,7 +8,7 @@
 
 # testing
 /coverage
-
+/tiptap-extension
 # next.js
 /.next/
 /out/
