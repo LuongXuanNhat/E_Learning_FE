@@ -3,7 +3,6 @@ import { Button, Select, Typography } from "@material-tailwind/react";
 import {
   CancelRegisterCourseByStudent,
   deleteClass,
-  fetchClass,
   fetchClassRegisted,
 } from "../services/service";
 import { useEffect, useState } from "react";
@@ -53,7 +52,6 @@ export default function RegistedCourse({
 
   const loadClasses = async () => {
     try {
-      console.log("2: Đã gọi" + state);
       const data = await fetchClassRegisted();
       setClases(data);
       setOriginalClasses(data);
@@ -74,7 +72,6 @@ export default function RegistedCourse({
   }, []);
 
   useEffect(() => {
-    console.log("2: " + state);
     if (state) {
       loadClasses();
     }

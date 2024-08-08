@@ -127,7 +127,6 @@ function IndexPage() {
 
   let userCookie = getCookieUser();
   useEffect(() => {
-    console.log(userCookie);
     if (userCookie) {
       fetchUser(userCookie.user_id);
     } else {
@@ -147,13 +146,7 @@ function IndexPage() {
     <div className="py-3">
       <Card color="transparent" shadow={false}>
         <div className="row flex flex-wrap">
-          <div className=" px-2 flex justify-between items-center w-full">
-            <Typography variant="h4" color="blue-gray">
-              Thông tin tài khoản
-            </Typography>
-          </div>
-
-          <div className="w-full flex justify-center pl-10">
+          <div className="w-full flex justify-center px-10">
             <form
               className="mt-8 mb-2 w-full max-w-screen-lg sm:w-[1200px]"
               onSubmit={handleSubmit}

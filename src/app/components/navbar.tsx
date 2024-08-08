@@ -38,6 +38,8 @@ export function StickyNavbar() {
   const [user, setUser] = useState<User>();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { addAlert } = useAlert();
+  const [isClient, setIsClient] = useState(false);
+
   const handleLoginSuccess = () => {
     const storedUser = getCookieUser();
     if (storedUser) {
@@ -78,7 +80,7 @@ export function StickyNavbar() {
       }
       lastScrollY = window.scrollY;
     };
-
+    setIsClient(true);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -98,7 +100,8 @@ export function StickyNavbar() {
           Giới thiệu
         </a>
       </Typography>
-      {IsRole([
+      {isClient &&
+      IsRole([
         Position.ADVISOR,
         Position.EDUCATION,
         Position.SECRETARY,
@@ -106,7 +109,8 @@ export function StickyNavbar() {
       ]) ? (
         <NavListMenu />
       ) : null}
-      {IsRole([Position.SUB_TEACHER, Position.ADVISOR, Position.STUDENT]) ? (
+      {isClient &&
+      IsRole([Position.SUB_TEACHER, Position.ADVISOR, Position.STUDENT]) ? (
         <Typography
           as="li"
           variant="small"
@@ -124,7 +128,7 @@ export function StickyNavbar() {
         color="blue-gray"
         className="p-1 font-normal"
       >
-        <a href="#" className="flex items-center">
+        <a href="/lop-hoc-cua-toi" className="flex items-center">
           Lớp học của tôi
         </a>
       </Typography>
@@ -275,9 +279,9 @@ export function StickyNavbar() {
 
 const profileMenuItems = [
   {
-    label: "Trang cá nhân",
+    label: "Cài đặt tài khoản",
     icon: UserCircleIcon,
-    url: "/trang-ca-nhan",
+    url: "/tai-khoan",
   },
 ];
 

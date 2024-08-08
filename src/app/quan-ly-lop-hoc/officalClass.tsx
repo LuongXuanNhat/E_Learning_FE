@@ -7,7 +7,11 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { Position, User } from "../models/User";
-import { deleteClass, fetchClass, fetchUsers } from "../services/service";
+import {
+  deleteClass,
+  fetchManagerClass,
+  fetchUsers,
+} from "../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
@@ -47,9 +51,9 @@ function ClassesManager() {
     setClases(filteredClasses);
   };
   useEffect(() => {
-    const loadUsers = async () => {
+    const loadClasses = async () => {
       try {
-        const data = await fetchClass();
+        const data = await fetchManagerClass();
         setClases(data);
         setOriginalClasses(data);
         setLoading(false);
@@ -59,12 +63,12 @@ function ClassesManager() {
       }
     };
 
-    loadUsers();
+    loadClasses();
   }, []);
   const deleteConfirm = async function (id: number) {
     try {
       await deleteClass(id);
-      const data = await fetchClass();
+      const data = await fetchManagerClass();
       setClases(data);
       setOriginalClasses(data);
       addAlert(AlertType.success, "Đã xóa thành công.");
@@ -151,11 +155,6 @@ function ClassesManager() {
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Loại lớp
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                 Học phần
               </p>
             </th>
@@ -197,15 +196,6 @@ function ClassesManager() {
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                   {classes.description}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p
-                  className={`${
-                    classes.course_id == null ? "bg-blue-500" : "bg-green-500"
-                  }   block font-sans text-sm antialiased font-normal leading-normal text-white px-4 py-2 rounded`}
-                >
-                  {classes.course_id == null ? "Lớp quản lý" : "Lớp bộ môn"}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">

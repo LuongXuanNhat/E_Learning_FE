@@ -2,8 +2,9 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import Loading from "@/app/components/loading";
+import { MiddlewareAuthor } from "@/app/middleware/Author";
 import { Course, de_xuat_ten_khoa_hoc } from "@/app/models/Course";
-import { User } from "@/app/models/User";
+import { Position, User } from "@/app/models/User";
 import {
   createCourse,
   createUser,
@@ -21,7 +22,7 @@ import {
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
-export default function IndexPage({ params }: { params: { id: number } }) {
+function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -267,3 +268,4 @@ export default function IndexPage({ params }: { params: { id: number } }) {
     </div>
   );
 }
+export default MiddlewareAuthor(IndexPage, [Position.EDUCATION]);

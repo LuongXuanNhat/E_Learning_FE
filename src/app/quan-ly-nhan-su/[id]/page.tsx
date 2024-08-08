@@ -2,6 +2,7 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import Loading from "@/app/components/loading";
+import { MiddlewareAuthor } from "@/app/middleware/Author";
 import {
   getPositionFromString,
   Position,
@@ -22,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 
-export default function IndexPage({ params }: { params: { id: number } }) {
+function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -327,3 +328,4 @@ export default function IndexPage({ params }: { params: { id: number } }) {
     </div>
   );
 }
+export default MiddlewareAuthor(IndexPage, [Position.EDUCATION]);

@@ -10,7 +10,6 @@ import { User } from "../models/User";
 import {
   CancelRegisterCourseByStudent,
   deleteClass,
-  fetchClass,
   fetchClassRegister,
   fetchUsers,
   RegisterCourseByStudent,
@@ -62,7 +61,6 @@ export default function RegisterCourse({
 
   const loadClasses = async () => {
     try {
-      console.log("1: Đã gọi" + state);
       const data = await fetchClassRegister();
       setClases(data);
       setOriginalClasses(data);
@@ -82,22 +80,11 @@ export default function RegisterCourse({
   }, []);
 
   useEffect(() => {
-    console.log("1: " + state);
     if (state) {
       loadClasses();
     }
   }, [state]);
-  const deleteConfirm = async function (id: number) {
-    try {
-      await deleteClass(id);
-      const data = await fetchClass();
-      setClases(data);
-      setOriginalClasses(data);
-      addAlert(AlertType.success, "Đã xóa thành công.");
-    } catch (err) {
-      setError("Có lỗi xảy ra khi xóa dữ liệu  lớp học.");
-    }
-  };
+
   async function RegisterCourse(classItem: Class) {
     try {
       await RegisterCourseByStudent(classItem.class_id, classItem.course_id);

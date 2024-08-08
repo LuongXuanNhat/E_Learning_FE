@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
+import { MiddlewareAuthor } from "@/app/middleware/Author";
 import {
   getPositionFromString,
   Position,
@@ -21,7 +22,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function IndexPage() {
+function IndexPage() {
   const { alerts, addAlert } = useAlert();
   const [user, setUser] = useState<User>({
     user_id: 0,
@@ -302,3 +303,4 @@ export default function IndexPage() {
     </div>
   );
 }
+export default MiddlewareAuthor(IndexPage, [Position.EDUCATION]);

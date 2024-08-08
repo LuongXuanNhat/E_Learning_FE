@@ -74,6 +74,7 @@ export function LoginCard({ onLoginSuccess }: { onLoginSuccess: () => void }) {
             label="Tài khoản"
             size="lg"
             crossOrigin=""
+            autoComplete="username"
             name="username"
             value={user.username}
             onChange={handleInputChange}
@@ -81,7 +82,9 @@ export function LoginCard({ onLoginSuccess }: { onLoginSuccess: () => void }) {
           <Input
             label="Mật khẩu"
             size="lg"
+            type="password"
             crossOrigin=""
+            autoComplete="current-password"
             name="password"
             value={user.password}
             onChange={handleInputChange}

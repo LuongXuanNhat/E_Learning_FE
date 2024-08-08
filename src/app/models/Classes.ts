@@ -14,6 +14,7 @@ export interface Class {
   schedule: string | null;
   created_at: string | Date;
   isRegistered: boolean | false;
+  totalRegister?: number | 0;
 
   Course?: Course;
   Advisor?: User;

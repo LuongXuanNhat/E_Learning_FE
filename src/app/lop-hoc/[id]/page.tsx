@@ -101,7 +101,7 @@ function IndexPage({ params }: { params: { id: number } }) {
       label: "Mọi người",
       value: "member",
       icon: Square3Stack3DIcon,
-      desc: <ClassMember />,
+      desc: <ClassMember id={params.id} />,
     },
     {
       label: "Điểm học tập",
@@ -125,16 +125,20 @@ function IndexPage({ params }: { params: { id: number } }) {
               Lớp học {classes.name}
             </Typography>
             <Typography color="gray">
-              <span className="pr-1">Từ ngày</span>
-              {format(
-                new Date(classes.Course!.start_date.toString()),
-                "dd-MM-yyyy"
-              )}
-              <span className="px-1"> đến ngày </span>
-              {format(
-                new Date(classes.Course!.end_date.toString()),
-                "dd-MM-yyyy"
-              )}
+              {classes.course_id ? (
+                <div>
+                  <span className="pr-1">Từ ngày</span>
+                  {format(
+                    new Date(classes.Course!.start_date.toString()),
+                    "dd-MM-yyyy"
+                  )}
+                  <span className="px-1"> đến ngày </span>
+                  {format(
+                    new Date(classes.Course!.end_date.toString()),
+                    "dd-MM-yyyy"
+                  )}
+                </div>
+              ) : null}
             </Typography>
           </div>
         </div>

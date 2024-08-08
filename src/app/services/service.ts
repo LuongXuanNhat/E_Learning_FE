@@ -1,6 +1,7 @@
 import { LoginDto } from "../components/login_card/loginDto";
 import { Class } from "../models/Classes";
 import { Course } from "../models/Course";
+import { Enrollment } from "../models/Enrollment";
 import { User } from "../models/User";
 import { getCookieUser } from "./authService";
 
@@ -162,8 +163,35 @@ export async function getCourseById(id: number) {
 }
 
 // CLASSES
-export async function fetchClass(): Promise<Class[]> {
-  const response = await fetch(apiBase + "/classes", {
+export async function fetchManagerClass(): Promise<Class[]> {
+  const response = await fetch(apiBase + "/classes/1", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function fetchMyClasses(): Promise<Enrollment[]> {
+  const student_id = getCookieUser()?.user_id;
+  const response = await fetch(apiBase + "/classes/myclasses/" + student_id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function fetchCourseClass(): Promise<Class[]> {
+  const response = await fetch(apiBase + "/classes/2", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -201,6 +229,33 @@ export async function fetchClassRegister(): Promise<Class[]> {
       },
     }
   );
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function fetchStudentClass(id: number): Promise<Enrollment[]> {
+  const response = await fetch(apiBase + "/classes/students/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+export async function fetchClassRegisterForAdmin(): Promise<Class[]> {
+  const response = await fetch(apiBase + "/classes/list", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   if (!response.ok) {
     const errorData = await response.json();
     throw errorData.message;
@@ -334,8 +389,8 @@ export async function saveBlog(content: string, class_id: number) {
   }
   return response.json();
 }
-export async function getBlogOfClass(id: number) {
-  const response = await fetch(apiBase + "/blogs", {
+export async function getBlogOfClass(class_id: number) {
+  const response = await fetch(apiBase + "/blogs/" + class_id, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -1,3 +1,4 @@
+import { Class } from "./Classes";
 import { Course } from "./Course";
 import { User } from "./User";
 
@@ -12,4 +13,5 @@ export interface Enrollment {
   // Associations
   Student?: User;
   Course?: Course;
+  Class?: Class;
 }

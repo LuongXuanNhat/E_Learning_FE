@@ -1,8 +1,9 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
+import { MiddlewareAuthor } from "@/app/middleware/Author";
 import { Course, de_xuat_ten_khoa_hoc } from "@/app/models/Course";
-import { User } from "@/app/models/User";
+import { Position, User } from "@/app/models/User";
 import { createCourse, createUser } from "@/app/services/service";
 import {
   Card,
@@ -14,7 +15,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function IndexPage() {
+function IndexPage() {
   const { addAlert } = useAlert();
   const [course, setCourse] = useState<Course>({
     course_id: 0,
@@ -177,7 +178,7 @@ export default function IndexPage() {
                       size="lg"
                       placeholder="01/01/2000"
                       className=" "
-                      value={course.start_date}
+                      value={course.start_date.toString()}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -190,7 +191,7 @@ export default function IndexPage() {
                       size="lg"
                       placeholder="01/02/2000"
                       className=" "
-                      value={course.end_date}
+                      value={course.end_date.toString()}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -203,7 +204,7 @@ export default function IndexPage() {
                       size="lg"
                       placeholder="01/02/2000"
                       className=" "
-                      value={course.registration_deadline}
+                      value={course.registration_deadline.toString()}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -230,3 +231,4 @@ export default function IndexPage() {
     </div>
   );
 }
+export default MiddlewareAuthor(IndexPage, [Position.EDUCATION]);
