@@ -1,26 +1,16 @@
-"use client";
-import {
-  Button,
-  Select,
-  Typography,
-  Option,
-  IconButton,
-} from "@material-tailwind/react";
-import { Position, User } from "../models/User";
-import {
-  deleteClass,
-  fetchManagerClass,
-  fetchMyClasses,
-  fetchUsers,
-} from "../services/service";
-import { useEffect, useState } from "react";
-import Loading from "../components/loading";
-import Pagination from "../components/paging";
-import { AlertType, useAlert } from "../components/Alert/alertbase";
-import { MiddlewareAuthor } from "../middleware/Author";
-import { Enrollment } from "../models/Enrollment";
+import { Metadata } from "next";
+import { memo, useEffect, useState } from "react";
+import { Enrollment } from "./models/Enrollment";
+import { useAlert } from "./components/Alert/alertbase";
+import { fetchMyClasses } from "./services/service";
+import Loading from "./components/loading";
+import Pagination from "./components/paging";
+import { Button, Typography } from "@material-tailwind/react";
+import { MiddlewareAuthor } from "./middleware/Author";
+import { Position } from "./models/User";
+import { format } from "date-fns";
 
-function MyClasses() {
+function MyClass() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [classes, setClasses] = useState<Enrollment[]>([]);
@@ -48,6 +38,7 @@ function MyClasses() {
 
     setClasses(filteredClasses);
   };
+
   useEffect(() => {
     const loadClasses = async () => {
       try {
@@ -110,7 +101,7 @@ function MyClasses() {
               className="w-40"
               onClick={() => {
                 setSearchTerm("");
-                setClasses(classes);
+                setClasses(classesCurent);
               }}
             >
               Xóa tìm kiếm
@@ -122,27 +113,61 @@ function MyClasses() {
         {classes.map((classes) => (
           <a
             key={classes.class_id}
-            href={`/lop-hoc/${classes.class_id}`}
-            className="w-1/4 px-4 py-4 mx-4 my-4 h-96 rounded-lg text-center"
+            href={
+              !classes.course_id ||
+              (classes.Class!.Course! &&
+                classes.Class!.Course!.registration_deadline > new Date())
+                ? `/lop-hoc/${classes.class_id}`
+                : "#"
+            }
+            className={` ${
+              !classes.course_id ||
+              (classes.Class!.Course &&
+                classes.Class!.Course!.registration_deadline > new Date())
+                ? "bg-white "
+                : "bg-[#0000001a] "
+            } w-1/4 px-4 py-4 mx-4 my-4 h-96 rounded-lg text-center `}
             style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
           >
+            <p className="w-full">
+              <p
+                className={`${
+                  classes.course_id ? "bg-green-500" : "bg-blue-500"
+                } flex ml-auto w-fit px-2 text-white text-xs py-1 rounded-xl`}
+              >
+                {classes.course_id ? "Lớp môn học" : "Lớp chính"}
+              </p>
+            </p>
             <p className="text-xl font-bold">{classes.Class?.name}</p>
-            <p className="py-4">Lịch học: {classes.Class?.schedule}</p>
+            {classes.Class!.course_id && (
+              <p className="py-4">Lịch học: {classes.Class?.schedule}</p>
+            )}
+            {classes.course_id && (
+              <p>
+                {format(
+                  new Date(classes.Class!.Course!.start_date.toString()),
+                  "dd-MM-yyyy"
+                )}
+                {"  "}-{"  "}
+                {format(
+                  new Date(classes.Class!.Course!.end_date.toString()),
+                  "dd-MM-yyyy"
+                )}
+              </p>
+            )}
             <img
               src="/images/class.png"
               alt=""
-              className="w-72 object-contain text-center"
+              className="w-52 object-contain mx-auto"
             />
           </a>
         ))}
       </div>
-
-      <Pagination
-        data={classes}
-        itemsPerPageOptions={[1, 2, 5, 10, 20, 50]}
-        onPageChange={setClasses}
-      />
     </div>
   );
 }
-export default MiddlewareAuthor(MyClasses, [Position.STUDENT]);
+export default MiddlewareAuthor(MyClass, [
+  Position.ADVISOR,
+  Position.SECRETARY,
+  Position.STUDENT,
+]);

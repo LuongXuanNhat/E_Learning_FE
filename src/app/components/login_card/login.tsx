@@ -13,9 +13,12 @@ import { LoginDto } from "./loginDto";
 import { useState } from "react";
 import { CookieName } from "@/app/models/keyCookie";
 import { getCookie, login, removeCookie } from "@/app/services/authService";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/dist/client/components/navigation";
 
 export function LoginCard({ onLoginSuccess }: { onLoginSuccess: () => void }) {
   const { addAlert } = useAlert();
+  const router = usePathname();
   const [user, setUser] = useState<LoginDto>({
     username: "",
     password: "",
@@ -35,6 +38,11 @@ export function LoginCard({ onLoginSuccess }: { onLoginSuccess: () => void }) {
       addAlert(AlertType.success, `Đăng nhập thành công`);
       if (getCookie(CookieName.isReload)) {
         removeCookie(CookieName.isReload);
+        window.location.reload();
+        onLoginSuccess();
+        return;
+      }
+      if (router == "/") {
         window.location.reload();
       }
       onLoginSuccess();

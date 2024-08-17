@@ -55,6 +55,7 @@ export function StickyNavbar() {
       setUser(undefined);
       setIsLoggedIn(false);
       addAlert(AlertType.success, "Đã đăng xuất");
+      window.location.reload();
       router.push("/");
     }
   };
@@ -122,16 +123,7 @@ export function StickyNavbar() {
           </a>
         </Typography>
       ) : null}
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="/lop-hoc-cua-toi" className="flex items-center">
-          Lớp học của tôi
-        </a>
-      </Typography>
+
       <Typography
         as="li"
         variant="small"
@@ -360,6 +352,10 @@ const navListMenuItems = [
     title: "Quản lý học phần",
     url: "/quan-ly-hoc-phan",
   },
+  {
+    title: "Quản lý môn học",
+    url: "/quan-ly-mon-hoc",
+  },
 ];
 
 function NavListMenu() {
@@ -394,14 +390,14 @@ function NavListMenu() {
         </MenuHandler>
         <MenuList className="hidden w-[36rem] grid-cols-7 gap-3 overflow-visible lg:grid z-[9999]">
           <Card
-            color="blue"
+            color="green"
             shadow={false}
             variant="gradient"
             className="col-span-3 grid h-full w-full place-items-center rounded-md"
           >
             <img src="/images/menuManage.jpg" className="w-50" />
           </Card>
-          <ul className="col-span-4 flex w-full flex-col gap-1">
+          <ul className="col-span-4 flex w-full flex-col gap-1 hover:border-none hover:outline-none ">
             {renderItems}
           </ul>
         </MenuList>

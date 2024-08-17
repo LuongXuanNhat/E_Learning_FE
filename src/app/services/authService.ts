@@ -56,6 +56,7 @@ export const isLogged = () => getCookieUser() != null;
 export default function IsRole(positions: Position[]) {
   let role = getCookieUser()?.chuc_vu;
   let result = false;
+  if (positions.length === 0) return true;
   positions.forEach((item) => {
     if (role == PositionLabels[item]) {
       result = true;

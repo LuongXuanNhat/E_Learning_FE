@@ -1,5 +1,6 @@
 export interface Course {
   course_id: number;
+  subject_id: number;
   name: string;
   description: string;
   status: string;

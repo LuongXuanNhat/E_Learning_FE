@@ -1,10 +1,10 @@
 "use client";
 import { Button, Select, Typography, Option } from "@material-tailwind/react";
-import { deleteCourse, fetchCourses } from "../services/service";
+import { deleteSubject, fetchSubjects } from "../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
-import { Course } from "../models/Course";
+import { Subject } from "../models/Subject";
 import { format } from "date-fns";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
 import { middleware } from "../lib/ultis";
@@ -12,25 +12,25 @@ import { MiddlewareAuthor } from "../middleware/Author";
 import { Position } from "../models/User";
 
 function EmployeeManager() {
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentCourses, setCurrentCourses] = useState<Course[]>([]);
-  const [originalCourses, setOriginalCourses] = useState<Course[]>([]);
+  const [currentSubjects, setCurrentSubjects] = useState<Subject[]>([]);
+  const [originalSubjects, setOriginalSubjects] = useState<Subject[]>([]);
   const { addAlert } = useAlert();
 
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (searchTerm === "") {
-      setCourses(originalCourses);
+      setSubjects(originalSubjects);
     }
     const searchWords = searchTerm
       .split(" ")
       .map((word) => word.trim().toLowerCase())
       .filter((word) => word.length > 0);
 
-    const filteredUsers = originalCourses.filter((user) => {
-      const userId = user.course_id.toString().toLowerCase();
+    const filteredUsers = originalSubjects.filter((user) => {
+      const userId = user.subject_id.toString().toLowerCase();
       const name = user.name.toLowerCase();
 
       return searchWords.every(
@@ -38,14 +38,14 @@ function EmployeeManager() {
       );
     });
 
-    setCourses(filteredUsers);
+    setSubjects(filteredUsers);
   };
   useEffect(() => {
-    const loadCourses = async () => {
+    const loadSubjects = async () => {
       try {
-        const data = await fetchCourses();
-        setCourses(data);
-        setOriginalCourses(data);
+        const data = await fetchSubjects();
+        setSubjects(data);
+        setOriginalSubjects(data);
         setLoading(false);
       } catch (err) {
         setError("Có lỗi xảy ra khi tải dữ liệu học phần: " + err);
@@ -53,14 +53,14 @@ function EmployeeManager() {
       }
     };
 
-    loadCourses();
+    loadSubjects();
   }, []);
   const deleteConfirm = async function (id: number) {
     try {
-      await deleteCourse(id);
-      const data = await fetchCourses();
-      setCourses(data);
-      setOriginalCourses(data);
+      await deleteSubject(id);
+      const data = await fetchSubjects();
+      setSubjects(data);
+      setOriginalSubjects(data);
       setLoading(false);
       addAlert(AlertType.success, "Đã xóa thành công.");
     } catch (err) {
@@ -75,7 +75,7 @@ function EmployeeManager() {
     <div className="relative flex flex-col pb-20 w-full h-full overflow-scroll text-gray-700 bg-white shadow-md ">
       <div className="flex justify-between items-center">
         <Typography variant="h4" color="blue-gray" className="py-5 pl-5">
-          Danh sách học phần
+          Danh sách môn học
         </Typography>
         <div className="flex justify-center">
           <div className="flex justify-center">
@@ -114,15 +114,15 @@ function EmployeeManager() {
               className="w-40"
               onClick={() => {
                 setSearchTerm("");
-                setCourses(originalCourses);
+                setSubjects(originalSubjects);
               }}
             >
               Xóa tìm kiếm
             </Button>
           </div>
-          <a href="/quan-ly-hoc-phan/them-moi" className="min-w-52">
+          <a href="/quan-ly-mon-hoc/them-moi" className="min-w-52">
             <Button ripple={true} className="bg-blue-700 mx-2">
-              Thêm mới học phần
+              Thêm mới môn học
             </Button>
           </a>
         </div>
@@ -132,7 +132,7 @@ function EmployeeManager() {
           <tr>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                ID khóa học
+                ID môn học
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
@@ -147,32 +147,7 @@ function EmployeeManager() {
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Trạng thái
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Ngày bắt đầu
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Ngày kết thúc
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Hạn đăng ký đến
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                 Ngày tạo
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Hình ảnh
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
@@ -183,60 +158,33 @@ function EmployeeManager() {
           </tr>
         </thead>
         <tbody>
-          {currentCourses.map((course) => (
-            <tr key={course.course_id}>
+          {currentSubjects.map((subject: Subject) => (
+            <tr key={subject.subject_id}>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {course.course_id}
+                  {subject.subject_id}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {course.name}
+                  {subject.name}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {course.description}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {course.status}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {format(new Date(course.start_date), "dd-MM-yyyy HH:mm")}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {format(new Date(course.end_date), "dd-MM-yyyy HH:mm")}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {format(
-                    new Date(course.registration_deadline),
-                    "dd-MM-yyyy HH:mm"
-                  )}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {format(new Date(course.created_at), "dd-MM-yyyy HH:mm")}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {course.image_url}
+                  {subject.description}
                 </p>
               </td>
 
-              <td className="p-4 border-b border-blue-gray-50 flex justify-around">
+              <td className="p-4 border-b border-blue-gray-50">
+                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                  {format(new Date(subject.created_at), "dd-MM-yyyy HH:mm")}
+                </p>
+              </td>
+
+              <td className="p-4 border-b border-blue-gray-50 flex justify-center">
                 <a
-                  href={`/quan-ly-hoc-phan/${course.course_id}`}
+                  href={`/quan-ly-mon-hoc/${subject.subject_id}`}
                   className="block font-sans text-sm antialiased font-medium leading-normal text-blue-gray-900 mr-2"
                 >
                   <Button color="amber" className="capitalize">
@@ -246,7 +194,7 @@ function EmployeeManager() {
                 <Button
                   color="red"
                   className="capitalize"
-                  onClick={() => deleteConfirm(course.course_id)}
+                  onClick={() => deleteConfirm(subject.subject_id)}
                 >
                   Xóa
                 </Button>
@@ -256,9 +204,9 @@ function EmployeeManager() {
         </tbody>
       </table>
       <Pagination
-        data={courses}
+        data={subjects}
         itemsPerPageOptions={[1, 2, 5, 10, 20, 50]}
-        onPageChange={setCurrentCourses}
+        onPageChange={setCurrentSubjects}
       />
     </div>
   );

@@ -4,10 +4,12 @@ import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import Loading from "@/app/components/loading";
 import { MiddlewareAuthor } from "@/app/middleware/Author";
 import { Course, de_xuat_ten_khoa_hoc } from "@/app/models/Course";
+import { Subject } from "@/app/models/Subject";
 import { Position, User } from "@/app/models/User";
 import {
   createCourse,
   createUser,
+  fetchSubjects,
   getCourseById,
   updateCourse,
 } from "@/app/services/service";
@@ -26,9 +28,11 @@ function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dataSubject, setDataSubject] = useState<Subject[]>([]);
 
   const [course, setCourse] = useState<Course>({
     course_id: 0,
+    subject_id: 0,
     name: "",
     description: "",
     status: "",
@@ -39,12 +43,16 @@ function IndexPage({ params }: { params: { id: number } }) {
     created_at: "",
   });
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: any) => {
     setCourse((prevCourse) => ({
       ...prevCourse,
       [name]: value,
     }));
+
+    const subject = dataSubject.find((x) => x.subject_id.toString() === value);
+    if (subject) handleSelectChange("name", subject.name);
   };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCourse((prevUser) => ({
@@ -55,6 +63,8 @@ function IndexPage({ params }: { params: { id: number } }) {
 
   const validateData = () => {
     const requiredFields: (keyof Course)[] = [
+      "name",
+      "subject_id",
       "description",
       "start_date",
       "end_date",
@@ -98,6 +108,10 @@ function IndexPage({ params }: { params: { id: number } }) {
       );
       return true;
     }
+    if (deadlineDate < new Date()) {
+      addAlert(AlertType.warning, "Hạn đăng ký không hợp lệ.");
+      return true;
+    }
     return false;
   };
 
@@ -117,6 +131,14 @@ function IndexPage({ params }: { params: { id: number } }) {
         AlertType.error,
         `Cập nhập học phần ${course.name} thất bại: ` + error
       );
+    }
+  };
+  const fetchData = async () => {
+    try {
+      const data = await fetchSubjects();
+      setDataSubject(data);
+    } catch (error) {
+      addAlert(AlertType.info, "Error fetching subjects: " + error);
     }
   };
   const loadCourse = async () => {
@@ -143,12 +165,15 @@ function IndexPage({ params }: { params: { id: number } }) {
   useEffect(() => {
     if (params.id) {
       loadCourse();
+      fetchData();
     } else {
       setError("Trang không tồn tại.");
     }
   }, []);
+
   if (loading) return <Loading />;
   if (error) return <div>{error}</div>;
+
   return (
     <div className="py-3">
       <Card color="transparent" shadow={false}>
@@ -178,16 +203,20 @@ function IndexPage({ params }: { params: { id: number } }) {
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
                     <Select
-                      name="name"
+                      name="subject_id"
                       label="Chọn khóa học (*)"
-                      value={course.name}
+                      key={course.subject_id}
+                      value={course.subject_id.toString()}
                       onChange={(value: any) =>
-                        handleSelectChange("name", value)
+                        handleSelectChange("subject_id", value)
                       }
                     >
-                      {Object.values(de_xuat_ten_khoa_hoc).map((khoaHoc) => (
-                        <Option key={khoaHoc} value={khoaHoc}>
-                          {khoaHoc}
+                      {dataSubject.map((subject) => (
+                        <Option
+                          key={subject.subject_id}
+                          value={subject.subject_id.toString()}
+                        >
+                          {subject.name}
                         </Option>
                       ))}
                     </Select>

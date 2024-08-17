@@ -28,7 +28,11 @@ import {
   TabPanel,
 } from "@material-tailwind/react";
 import { format } from "date-fns";
-import React from "react";
+import React, {
+  ForwardRefExoticComponent,
+  RefAttributes,
+  SVGProps,
+} from "react";
 import { useEffect, useState } from "react";
 import DashboardClass from "./dashboard";
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
@@ -36,6 +40,7 @@ import RoomChatClass from "./roomchat";
 import ClassMember from "./classmember";
 import ClassReview from "./classreview";
 import StudyPoint from "./studypoint";
+import IsRole from "@/app/services/authService";
 
 function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
@@ -51,6 +56,7 @@ function IndexPage({ params }: { params: { id: number } }) {
     Course: {
       start_date: new Date(),
       end_date: new Date(),
+      subject_id: 0,
       course_id: 0,
       created_at: "",
       description: "",
@@ -73,47 +79,67 @@ function IndexPage({ params }: { params: { id: number } }) {
       created_at: "",
     },
   });
+  const [allowedTabs, setAllowedTabs] = useState<TabItem[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const dataClass = await getClassById(params.id);
       setClass(dataClass);
-      console.log(classes);
     };
+    const allowed = data.filter(({ allow }) => IsRole(allow));
+    setAllowedTabs(allowed);
 
     fetchData();
   }, []);
 
-  const data = [
+  interface TabItem {
+    label: string;
+    value: string;
+    icon: ForwardRefExoticComponent<
+      Omit<SVGProps<SVGSVGElement>, "ref"> & {
+        title?: string | undefined;
+        titleId?: string | undefined;
+      } & RefAttributes<SVGSVGElement>
+    >;
+    desc: React.ReactElement;
+    allow: Position[];
+  }
+
+  const data: TabItem[] = [
     {
       label: "Bảng tin",
       value: "dashboard",
       icon: Square3Stack3DIcon,
       desc: <DashboardClass id={params.id} />,
+      allow: [],
     },
     {
       label: "Phòng trao đổi",
       value: "roomchat",
       icon: Square3Stack3DIcon,
       desc: <RoomChatClass />,
+      allow: [Position.ADVISOR, Position.SUB_TEACHER, Position.STUDENT],
     },
     {
       label: "Mọi người",
       value: "member",
       icon: Square3Stack3DIcon,
       desc: <ClassMember id={params.id} />,
+      allow: [],
     },
     {
       label: "Điểm học tập",
       value: "studypoint",
       icon: Square3Stack3DIcon,
       desc: <StudyPoint />,
+      allow: [Position.ADVISOR, Position.SECRETARY],
     },
     {
       label: "Đánh giá lớp học",
       value: "review",
       icon: Square3Stack3DIcon,
       desc: <ClassReview />,
+      allow: [Position.ADVISOR, Position.SECRETARY],
     },
   ];
   return (
@@ -145,7 +171,7 @@ function IndexPage({ params }: { params: { id: number } }) {
       </Card>
       <Tabs value="dashboard" className="py-4">
         <TabsHeader>
-          {data.map(({ label, value, icon }) => (
+          {allowedTabs.map(({ label, value, icon }) => (
             <Tab key={value} value={value}>
               <div className="flex items-center gap-2">
                 {React.createElement(icon, { className: "w-5 h-5" })}

@@ -2,6 +2,7 @@ import { LoginDto } from "../components/login_card/loginDto";
 import { Class } from "../models/Classes";
 import { Course } from "../models/Course";
 import { Enrollment } from "../models/Enrollment";
+import { Subject } from "../models/Subject";
 import { User } from "../models/User";
 import { getCookieUser } from "./authService";
 
@@ -317,6 +318,28 @@ export async function getClassById(id: number) {
   }
   return response.json();
 }
+export async function updateMemberInClass(
+  data: User[],
+  class_id: number,
+  course_id: number | null
+) {
+  const response = await fetch(apiBase + "/enrollments/addMember", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      data,
+      class_id,
+      course_id,
+    }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
 export async function RegisterCourseByStudent(
   class_id: number,
   course_id: number | null
@@ -414,4 +437,75 @@ export async function deleteBlog(id: number) {
     throw errorData.message;
   }
   return response.ok;
+}
+
+//      SUBJECT
+export async function fetchSubjects(): Promise<Subject[]> {
+  const response = await fetch(apiBase + "/subjects", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+export async function createSubject(data: Subject) {
+  data.created_at = new Date();
+  const response = await fetch(apiBase + "/subjects", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateSubject(data: Subject) {
+  const response = await fetch(apiBase + "/subjects/" + data.subject_id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function deleteSubject(id: number) {
+  const response = await fetch(apiBase + "/subjects/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function getSubjectById(id: number) {
+  const response = await fetch(apiBase + "/subjects/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
 }

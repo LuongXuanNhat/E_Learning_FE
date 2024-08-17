@@ -1,5 +1,5 @@
 "use client";
 
 export default function RoomChatClass() {
-  return <div></div>;
+  return <div>Hello</div>;
 }

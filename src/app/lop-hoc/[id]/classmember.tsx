@@ -12,6 +12,7 @@ import { useEffect } from "react";
 
 export default function ClassMember({ id }: { id: number }) {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const [classes, setClass] = React.useState<Class>({
     class_id: 0,
     isRegistered: false,
@@ -24,6 +25,7 @@ export default function ClassMember({ id }: { id: number }) {
     Course: {
       start_date: new Date(),
       end_date: new Date(),
+      subject_id: 0,
       course_id: 0,
       created_at: "",
       description: "",
@@ -46,20 +48,21 @@ export default function ClassMember({ id }: { id: number }) {
       created_at: "",
     },
   });
-  const addStudent = () => {
-    router.push("/lop-hoc/them-hoc-vien/" + classes.class_id);
-  };
   const fetchData = async () => {
     const dataClass = await getClassById(id);
     setClass(dataClass);
-
     const dataStudents = await fetchStudentClass(id);
     setStudents(dataStudents);
   };
   const [students, setStudents] = useState<Enrollment[]>([]);
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, []);
+
+  if (loading) {
+    return null;
+  }
   return (
     <div className="container">
       <div className="px-10 mx-20">
@@ -81,11 +84,10 @@ export default function ClassMember({ id }: { id: number }) {
             <div className="flex items-center">
               <Typography variant="h6">{students.length} bạn học</Typography>
               {IsRole([Position.EDUCATION]) && (
-                <Button
-                  className="px-4 py-2 rounded-md ml-4 bg-blue-500"
-                  onClick={() => addStudent}
-                >
-                  Thêm học viên
+                <Button className="px-4 py-2 rounded-md ml-4 bg-blue-500">
+                  <a href={`/lop-hoc/${classes.class_id}/cap-nhap-hoc-vien`}>
+                    Cập nhập học viên
+                  </a>
                 </Button>
               )}
             </div>

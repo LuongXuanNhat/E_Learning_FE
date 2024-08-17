@@ -3,8 +3,13 @@
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import { MiddlewareAuthor } from "@/app/middleware/Author";
 import { Course, de_xuat_ten_khoa_hoc } from "@/app/models/Course";
+import { Subject } from "@/app/models/Subject";
 import { Position, User } from "@/app/models/User";
-import { createCourse, createUser } from "@/app/services/service";
+import {
+  createCourse,
+  createUser,
+  fetchSubjects,
+} from "@/app/services/service";
 import {
   Card,
   Input,
@@ -13,12 +18,14 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function IndexPage() {
   const { addAlert } = useAlert();
+  const [dataSubject, setDataSubject] = useState<Subject[]>([]);
   const [course, setCourse] = useState<Course>({
     course_id: 0,
+    subject_id: 0,
     name: "",
     description: "",
     status: "",
@@ -29,11 +36,14 @@ function IndexPage() {
     created_at: "",
   });
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: any) => {
     setCourse((prevCourse) => ({
       ...prevCourse,
       [name]: value,
     }));
+
+    const subject = dataSubject.find((x) => x.subject_id.toString() === value);
+    if (subject) handleSelectChange("name", subject.name);
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,6 +55,8 @@ function IndexPage() {
 
   const validateData = () => {
     const requiredFields: (keyof Course)[] = [
+      "name",
+      "subject_id",
       "description",
       "start_date",
       "end_date",
@@ -88,6 +100,10 @@ function IndexPage() {
       );
       return true;
     }
+    if (deadlineDate < new Date()) {
+      addAlert(AlertType.warning, "Hạn đăng ký không hợp lệ.");
+      return true;
+    }
     return false;
   };
 
@@ -102,6 +118,7 @@ function IndexPage() {
       course.description = "";
       course.start_date = "";
       course.end_date = "";
+      course.subject_id = 0;
       course.registration_deadline = "";
     } catch (error) {
       console.error("Lỗi:", error);
@@ -111,6 +128,19 @@ function IndexPage() {
       );
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchSubjects();
+        setDataSubject(data);
+      } catch (error) {
+        addAlert(AlertType.info, "Error fetching subjects: " + error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="py-3">
@@ -141,16 +171,20 @@ function IndexPage() {
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
                     <Select
-                      name="name"
+                      name="subject_id"
                       label="Chọn khóa học (*)"
-                      value={course.name}
+                      key={course.subject_id}
+                      value={course.subject_id.toString()}
                       onChange={(value: any) =>
-                        handleSelectChange("name", value)
+                        handleSelectChange("subject_id", value)
                       }
                     >
-                      {Object.values(de_xuat_ten_khoa_hoc).map((khoaHoc) => (
-                        <Option key={khoaHoc} value={khoaHoc}>
-                          {khoaHoc}
+                      {dataSubject.map((subject) => (
+                        <Option
+                          key={subject.subject_id}
+                          value={subject.subject_id.toString()}
+                        >
+                          {subject.name}
                         </Option>
                       ))}
                     </Select>

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "E-Learning | Nhân sự",
+  title: "E-Learning | Cập nhập học phần",
   icons: {
     icon: "/images/logo.jpg",
     shortcut: "/images/logo.jpg",
