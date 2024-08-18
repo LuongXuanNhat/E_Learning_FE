@@ -1,5 +1,5 @@
 "use client";
 
-export default function RoomChatClass() {
-  return <div>Hello</div>;
+export default function RoomChatClass({ id }: { id: number }) {
+  return <div>...</div>;
 }

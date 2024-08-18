@@ -5,17 +5,25 @@ import { MiddlewareAuthor } from "@/app/middleware/Author";
 import { Class } from "@/app/models/Classes";
 import { Position, User } from "@/app/models/User";
 import {
+  fetchStudentClass,
   fetchStudents,
   getClassById,
   updateMemberInClass,
 } from "@/app/services/service";
-import { Select, Option, Input, Button } from "@material-tailwind/react";
+import {
+  Select,
+  Option,
+  Input,
+  Button,
+  Typography,
+} from "@material-tailwind/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 function AddStudent() {
   const [students, setStudents] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [classId, setClassId] = useState(0);
   const [selectedValues, setSelectedValues] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { addAlert } = useAlert();
@@ -23,27 +31,46 @@ function AddStudent() {
 
   const router = usePathname();
 
+  const getClassId = () => {
+    const matches = router!.match(/\/lop-hoc\/(\d+)/);
+    let class_id;
+    if (matches && matches.length > 0) {
+      class_id = matches[1];
+      setClassId(Number(class_id));
+    }
+  };
   const getClass = async () => {
     const matches = router!.match(/\/lop-hoc\/(\d+)/);
     let class_id;
     if (matches && matches.length > 0) {
       class_id = matches[1];
     }
-
-    console.log(class_id);
-    const classId = Number(class_id);
-    setClass(await getClassById(classId));
+    setClass(await getClassById(Number(class_id)));
   };
 
   const fetchData = async () => {
+    const matches = router!.match(/\/lop-hoc\/(\d+)/);
+    let class_id;
+    if (matches && matches.length > 0) {
+      class_id = matches[1];
+    }
     const dataStudents = await fetchStudents();
-    setStudents(dataStudents);
+    const studentListInClass = await fetchStudentClass(Number(class_id));
+
+    const filteredStudents = dataStudents.filter(
+      (student) =>
+        !studentListInClass.some(
+          (classStudent) => classStudent.student_id === student.user_id
+        )
+    );
+    setStudents(filteredStudents);
   };
 
   useEffect(() => {
+    getClassId();
     getClass();
+    fetchData();
     setLoading(false);
-    getClass();
   }, []);
 
   const handleSelectChange = (value: User) => {
@@ -70,7 +97,6 @@ function AddStudent() {
 
   const updateMemberClass = async () => {
     if (selectedValues && selectedValues.length > 0) {
-      console.log(selectedValues);
       try {
         await updateMemberInClass(
           selectedValues,
@@ -79,6 +105,9 @@ function AddStudent() {
         );
 
         addAlert(AlertType.success, "Cập nhập học viên trong lớp thành công");
+
+        setSelectedValues([]);
+        await fetchData();
       } catch (error) {
         addAlert(AlertType.error, "Có lỗi khi cập nhập học viên");
       }
@@ -91,6 +120,16 @@ function AddStudent() {
 
   return (
     <div>
+      <div className="flex justify-between pt-3">
+        <Typography variant="h5" className="">
+          Cập nhập học viên trong lớp
+        </Typography>
+        <a href={`/lop-hoc/${classId}`}>
+          <Button ripple={true} className="" type="submit" variant="outlined">
+            Trở về
+          </Button>
+        </a>
+      </div>
       <div className="pt-5 flex justify-between">
         <Select
           name="user_id"

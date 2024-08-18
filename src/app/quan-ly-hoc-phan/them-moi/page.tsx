@@ -135,7 +135,7 @@ function IndexPage() {
         const data = await fetchSubjects();
         setDataSubject(data);
       } catch (error) {
-        addAlert(AlertType.info, "Error fetching subjects: " + error);
+        addAlert(AlertType.info, "Lỗi lấy danh sách môn học: " + error);
       }
     };
 

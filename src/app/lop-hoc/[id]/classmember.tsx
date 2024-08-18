@@ -1,10 +1,15 @@
 "use client";
 
+import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import { Class } from "@/app/models/Classes";
 import { Enrollment } from "@/app/models/Enrollment";
 import { Position } from "@/app/models/User";
 import IsRole from "@/app/services/authService";
-import { fetchStudentClass, getClassById } from "@/app/services/service";
+import {
+  fetchStudentClass,
+  getClassById,
+  removeStudentFromClass,
+} from "@/app/services/service";
 import { Button, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -12,6 +17,7 @@ import { useEffect } from "react";
 
 export default function ClassMember({ id }: { id: number }) {
   const router = useRouter();
+  const { addAlert } = useAlert();
   const [loading, setLoading] = useState(true);
   const [classes, setClass] = React.useState<Class>({
     class_id: 0,
@@ -48,14 +54,18 @@ export default function ClassMember({ id }: { id: number }) {
       created_at: "",
     },
   });
-  const fetchData = async () => {
+
+  const getClassInfo = async () => {
     const dataClass = await getClassById(id);
     setClass(dataClass);
+  };
+  const fetchData = async () => {
     const dataStudents = await fetchStudentClass(id);
     setStudents(dataStudents);
   };
   const [students, setStudents] = useState<Enrollment[]>([]);
   useEffect(() => {
+    getClassInfo();
     fetchData();
     setLoading(false);
   }, []);
@@ -63,6 +73,22 @@ export default function ClassMember({ id }: { id: number }) {
   if (loading) {
     return null;
   }
+  async function DeleteStudent(
+    enrollment_id: number,
+    name: string
+  ): Promise<void> {
+    try {
+      await removeStudentFromClass(enrollment_id);
+      addAlert(AlertType.success, `Đã xóa học viên ${name} ra khỏi lớp`);
+      fetchData();
+    } catch (error) {
+      addAlert(
+        AlertType.warning,
+        `Có lỗi xảy ra! Vui lòng liên hệ quản trị viên để xử lý`
+      );
+    }
+  }
+
   return (
     <div className="container">
       <div className="px-10 mx-20">
@@ -99,9 +125,20 @@ export default function ClassMember({ id }: { id: number }) {
                   enrollment.Student ? (
                     <li
                       key={enrollment.enrollment_id}
-                      className="py-5 border-b-2"
+                      className="py-5 border-b-2 flex justify-between"
                     >
-                      {enrollment.Student.name}
+                      <span>{enrollment.Student.name}</span>
+                      <Button
+                        className="px-4 py-2 rounded-md ml-4 bg-red-500"
+                        onClick={() =>
+                          DeleteStudent(
+                            enrollment.enrollment_id,
+                            enrollment.Student!.name
+                          )
+                        }
+                      >
+                        Xóa khỏi lớp
+                      </Button>
                     </li>
                   ) : null
                 )}

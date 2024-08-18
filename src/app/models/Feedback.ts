@@ -5,7 +5,6 @@ export interface Feedback {
   class_id: number;
   user_id: number;
   content: string;
-  date: Date;
   created_at: Date;
 
   User?: User;

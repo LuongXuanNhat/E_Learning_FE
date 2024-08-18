@@ -101,17 +101,8 @@ export function StickyNavbar() {
           Giới thiệu
         </a>
       </Typography>
-      {isClient &&
-      IsRole([
-        Position.ADVISOR,
-        Position.EDUCATION,
-        Position.SECRETARY,
-        Position.SUB_TEACHER,
-      ]) ? (
-        <NavListMenu />
-      ) : null}
-      {isClient &&
-      IsRole([Position.SUB_TEACHER, Position.ADVISOR, Position.STUDENT]) ? (
+      {isClient && IsRole([Position.EDUCATION]) ? <NavListMenu /> : null}
+      {isClient && IsRole([Position.STUDENT]) ? (
         <Typography
           as="li"
           variant="small"

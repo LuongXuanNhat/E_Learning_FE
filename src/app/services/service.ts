@@ -2,6 +2,8 @@ import { LoginDto } from "../components/login_card/loginDto";
 import { Class } from "../models/Classes";
 import { Course } from "../models/Course";
 import { Enrollment } from "../models/Enrollment";
+import { Feedback } from "../models/Feedback";
+import { Lession } from "../models/Lession";
 import { Subject } from "../models/Subject";
 import { User } from "../models/User";
 import { getCookieUser } from "./authService";
@@ -191,6 +193,23 @@ export async function fetchMyClasses(): Promise<Enrollment[]> {
   }
   return response.json();
 }
+export async function fetchTeacherClasses(): Promise<Class[]> {
+  const teacher_id = getCookieUser()?.user_id;
+  const response = await fetch(
+    apiBase + "/classes/teacherclasses/" + teacher_id,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
 export async function fetchCourseClass(): Promise<Class[]> {
   const response = await fetch(apiBase + "/classes/2", {
     method: "GET",
@@ -294,6 +313,19 @@ export async function updateClass(userData: Class) {
 }
 export async function deleteClass(id: number) {
   const response = await fetch(apiBase + "/classes/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function removeStudentFromClass(id: number) {
+  const response = await fetch(apiBase + "/enrollments/" + id, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -498,6 +530,148 @@ export async function deleteSubject(id: number) {
 }
 export async function getSubjectById(id: number) {
   const response = await fetch(apiBase + "/subjects/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+//      LESSION VIDEO
+export async function fetchLessions(id: number): Promise<Lession[]> {
+  const response = await fetch(apiBase + "/lessions/class/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+export async function createLession(data: Lession) {
+  data.created_at = new Date();
+  const response = await fetch(apiBase + "/lessions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateLession(data: Lession) {
+  const response = await fetch(apiBase + "/lessions/" + data.LessionVideo_id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function deleteLession(id: number) {
+  const response = await fetch(apiBase + "/lessions/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function getLessionById(id: number) {
+  const response = await fetch(apiBase + "/lessions/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+//      FEEDBACK
+export async function fetchFeedbacks(id: number): Promise<Feedback[]> {
+  const response = await fetch(apiBase + "/feedbacks/class/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+export async function createFeedback(data: Feedback) {
+  data.created_at = new Date();
+  const response = await fetch(apiBase + "/feedbacks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateFeedback(data: Feedback) {
+  const response = await fetch(apiBase + "/feedbacks/" + data.feedback_id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function deleteFeedback(id: number) {
+  const response = await fetch(apiBase + "/feedbacks/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function getFeedbackById(id: number) {
+  const response = await fetch(apiBase + "/feedbacks/" + id, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

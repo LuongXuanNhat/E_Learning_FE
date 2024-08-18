@@ -7,7 +7,6 @@ import Pagination from "../components/paging";
 import { Course } from "../models/Course";
 import { format } from "date-fns";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
-import { middleware } from "../lib/ultis";
 import { MiddlewareAuthor } from "../middleware/Author";
 import { Position } from "../models/User";
 

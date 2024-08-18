@@ -41,6 +41,7 @@ import ClassMember from "./classmember";
 import ClassReview from "./classreview";
 import StudyPoint from "./studypoint";
 import IsRole from "@/app/services/authService";
+import LessionVideo from "./lession";
 
 function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
@@ -114,10 +115,17 @@ function IndexPage({ params }: { params: { id: number } }) {
       allow: [],
     },
     {
+      label: "Bài giảng",
+      value: "lession",
+      icon: Square3Stack3DIcon,
+      desc: <LessionVideo id={params.id} />,
+      allow: [],
+    },
+    {
       label: "Phòng trao đổi",
       value: "roomchat",
       icon: Square3Stack3DIcon,
-      desc: <RoomChatClass />,
+      desc: <RoomChatClass id={params.id} />,
       allow: [Position.ADVISOR, Position.SUB_TEACHER, Position.STUDENT],
     },
     {
@@ -125,21 +133,26 @@ function IndexPage({ params }: { params: { id: number } }) {
       value: "member",
       icon: Square3Stack3DIcon,
       desc: <ClassMember id={params.id} />,
-      allow: [],
+      allow: [
+        Position.ADVISOR,
+        Position.EDUCATION,
+        Position.SECRETARY,
+        Position.SUB_TEACHER,
+      ],
     },
     {
       label: "Điểm học tập",
       value: "studypoint",
       icon: Square3Stack3DIcon,
-      desc: <StudyPoint />,
+      desc: <StudyPoint id={params.id} />,
       allow: [Position.ADVISOR, Position.SECRETARY],
     },
     {
       label: "Đánh giá lớp học",
       value: "review",
       icon: Square3Stack3DIcon,
-      desc: <ClassReview />,
-      allow: [Position.ADVISOR, Position.SECRETARY],
+      desc: <ClassReview id={params.id} />,
+      allow: [Position.ADVISOR, Position.SECRETARY, Position.STUDENT],
     },
   ];
   return (
@@ -147,10 +160,10 @@ function IndexPage({ params }: { params: { id: number } }) {
       <Card color="transparent" shadow={false}>
         <div className="row flex flex-wrap">
           <div className=" px-2 flex justify-between items-center w-full">
-            <Typography variant="h4" color="blue-gray">
+            <Typography as="span" variant="h4" color="blue-gray">
               Lớp học {classes.name}
             </Typography>
-            <Typography color="gray">
+            <Typography as="div" color="gray">
               {classes.course_id ? (
                 <div>
                   <span className="pr-1">Từ ngày</span>

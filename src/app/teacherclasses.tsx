@@ -2,19 +2,20 @@ import { Metadata } from "next";
 import { memo, useEffect, useState } from "react";
 import { Enrollment } from "./models/Enrollment";
 import { useAlert } from "./components/Alert/alertbase";
-import { fetchMyClasses } from "./services/service";
+import { fetchMyClasses, fetchTeacherClasses } from "./services/service";
 import Loading from "./components/loading";
 import Pagination from "./components/paging";
 import { Button, Typography } from "@material-tailwind/react";
 import { MiddlewareAuthor } from "./middleware/Author";
 import { Position } from "./models/User";
 import { format } from "date-fns";
+import { Class } from "./models/Classes";
 
-function MyClass() {
+function TeacherClasses() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [classes, setClasses] = useState<Enrollment[]>([]);
-  const [classesCurent, setClassesCurent] = useState<Enrollment[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [classesCurent, setClassesCurent] = useState<Class[]>([]);
   const { addAlert } = useAlert();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,7 +30,7 @@ function MyClass() {
 
     const filteredClasses = classesCurent.filter((clas) => {
       const userId = clas.class_id.toString().toLowerCase();
-      const name = clas.Class?.name.toLowerCase();
+      const name = clas.name.toLowerCase();
 
       return searchWords.every(
         (word) => userId.includes(word) || name?.includes(word)
@@ -42,7 +43,7 @@ function MyClass() {
   useEffect(() => {
     const loadClasses = async () => {
       try {
-        const data = await fetchMyClasses();
+        const data = await fetchTeacherClasses();
         setClasses(data);
         setClassesCurent(data);
         setLoading(false);
@@ -67,7 +68,7 @@ function MyClass() {
           color="blue-gray"
           className="py-5 pl-5"
         >
-          Danh sách lớp học
+          Danh sách lớp học giảng dạy
         </Typography>
         <div className="flex justify-center">
           <div className="flex justify-center">
@@ -118,20 +119,10 @@ function MyClass() {
         {classes.map((classes) => (
           <a
             key={classes.class_id}
-            href={
-              !classes.course_id ||
-              (classes.Class!.Course! &&
-                classes.Class!.Course!.registration_deadline > new Date())
-                ? `/lop-hoc/${classes.class_id}`
-                : "#"
-            }
-            className={` ${
-              !classes.course_id ||
-              (classes.Class!.Course &&
-                classes.Class!.Course!.registration_deadline > new Date())
-                ? "bg-white "
-                : "bg-[#0000001a] "
-            } w-1/4 px-4 py-4 mx-4 my-4 h-96 rounded-lg text-center `}
+            href={`/lop-hoc/${classes.class_id}`}
+            className={`  bg-white 
+                
+             w-1/4 px-4 py-4 mx-4 my-4 h-96 rounded-lg text-center `}
             style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
           >
             <div className="w-full">
@@ -143,19 +134,19 @@ function MyClass() {
                 {classes.course_id ? "Lớp môn học" : "Lớp chính"}
               </div>
             </div>
-            <div className="text-xl font-bold">{classes.Class?.name}</div>
-            {classes.Class!.course_id && (
-              <p className="py-4">Lịch học: {classes.Class?.schedule}</p>
+            <div className="text-xl font-bold">{classes?.name}</div>
+            {classes!.course_id && (
+              <p className="py-4">Lịch học: {classes?.schedule}</p>
             )}
             {classes.course_id && (
               <p>
                 {format(
-                  new Date(classes.Class!.Course!.start_date.toString()),
+                  new Date(classes!.Course!.start_date.toString()),
                   "dd-MM-yyyy"
                 )}
                 {"  "}-{"  "}
                 {format(
-                  new Date(classes.Class!.Course!.end_date.toString()),
+                  new Date(classes!.Course!.end_date.toString()),
                   "dd-MM-yyyy"
                 )}
               </p>
@@ -171,4 +162,7 @@ function MyClass() {
     </div>
   );
 }
-export default MiddlewareAuthor(MyClass, [Position.STUDENT]);
+export default MiddlewareAuthor(TeacherClasses, [
+  Position.ADVISOR,
+  Position.SUB_TEACHER,
+]);
