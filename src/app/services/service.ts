@@ -167,7 +167,7 @@ export async function getCourseById(id: number) {
 
 // CLASSES
 export async function fetchManagerClass(): Promise<Class[]> {
-  const response = await fetch(apiBase + "/classes/1", {
+  const response = await fetch(apiBase + "/classes/t/1", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -211,7 +211,7 @@ export async function fetchTeacherClasses(): Promise<Class[]> {
   return response.json();
 }
 export async function fetchCourseClass(): Promise<Class[]> {
-  const response = await fetch(apiBase + "/classes/2", {
+  const response = await fetch(apiBase + "/classes/t/2", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

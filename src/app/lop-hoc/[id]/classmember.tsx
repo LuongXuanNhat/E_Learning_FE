@@ -104,14 +104,14 @@ export default function ClassMember({ id }: { id: number }) {
           </div>
           <hr />
         </div>
-        <div>
+        <div> 
           <div className="flex justify-between mt-4">
             <Typography variant="h5">Học viên</Typography>
             <div className="flex items-center">
               <Typography variant="h6">{students.length} bạn học</Typography>
               {IsRole([Position.EDUCATION]) && (
                 <Button className="px-4 py-2 rounded-md ml-4 bg-blue-500">
-                  <a href={`/lop-hoc/${classes.class_id}/cap-nhap-hoc-vien`}>
+                  <a href={`/lop-hoc/${id}/cap-nhap-hoc-vien`}>
                     Cập nhập học viên
                   </a>
                 </Button>

@@ -45,7 +45,10 @@ function AddStudent() {
     if (matches && matches.length > 0) {
       class_id = matches[1];
     }
-    setClass(await getClassById(Number(class_id)));
+
+    const dataClass = await getClassById(Number(class_id));
+    console.log(dataClass);
+    setClass(dataClass);
   };
 
   const fetchData = async () => {
