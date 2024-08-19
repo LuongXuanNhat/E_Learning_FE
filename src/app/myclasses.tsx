@@ -43,6 +43,7 @@ function MyClass() {
     const loadClasses = async () => {
       try {
         const data = await fetchMyClasses();
+        console.log(data);
         setClasses(data);
         setClassesCurent(data);
         setLoading(false);
@@ -103,7 +104,7 @@ function MyClass() {
             <Button
               ripple={true}
               color="blue"
-              className="w-40"
+              className="w-full"
               onClick={() => {
                 setSearchTerm("");
                 setClasses(classesCurent);
@@ -122,7 +123,7 @@ function MyClass() {
               !classes.course_id ||
               (classes.Class!.Course! &&
                 classes.Class!.Course!.registration_deadline > new Date())
-                ? `/lop-hoc/${classes.class_id}`
+                ? `/lop-hoc/${classes.class_id ?? classes.Class?.class_id}`
                 : "#"
             }
             className={` ${
@@ -144,7 +145,7 @@ function MyClass() {
               </div>
             </div>
             <div className="text-xl font-bold">{classes.Class?.name}</div>
-            {classes.Class!.course_id && (
+            {classes.Class?.course_id && (
               <p className="py-4">Lịch học: {classes.Class?.schedule}</p>
             )}
             {classes.course_id && (

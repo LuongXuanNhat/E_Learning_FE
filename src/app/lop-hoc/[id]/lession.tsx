@@ -33,7 +33,7 @@ export default function LessionVideo({ id }: { id: number }) {
 
   useEffect(() => {
     setRole(
-      IsRole([Position.ADVISOR, Position.EDUCATION, Position.SUB_TEACHER])
+      IsRole([Position.ADVISOR, Position.SUB_TEACHER])
     );
 
     fetchLessionData();

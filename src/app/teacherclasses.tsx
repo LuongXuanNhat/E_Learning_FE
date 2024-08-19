@@ -104,7 +104,7 @@ function TeacherClasses() {
             <Button
               ripple={true}
               color="blue"
-              className="w-40"
+              className="w-full"
               onClick={() => {
                 setSearchTerm("");
                 setClasses(classesCurent);
