@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getCookieUser, setCookie } from "../services/authService";
-import { AlertType, useAlert } from "../components/Alert/alertbase";
+import { AlertType, useAlert } from "../app/components/Alert/alertbase";
 import { Position, PositionLabels } from "../models/User";
 import { CookieName } from "../models/keyCookie";
 

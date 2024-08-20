@@ -9,8 +9,8 @@ import {
   PositionLabels,
   Rank,
   User,
-} from "@/app/models/User";
-import { createUser, getUserById, updateUser } from "@/app/services/service";
+} from "@/models/User";
+import { createUser, getUserById, updateUser } from "@/services/service";
 import {
   Card,
   Input,
@@ -19,8 +19,8 @@ import {
   Radio,
 } from "@material-tailwind/react";
 import { ChangeEvent, useEffect, useState } from "react";
-import { MiddlewareAuthen } from "../middleware/Authen";
-import { getCookieUser, Logout } from "../services/authService";
+import { MiddlewareAuthen } from "../../middleware/Authen";
+import { getCookieUser, Logout } from "../../services/authService";
 import { useRouter } from "next/navigation";
 
 function IndexPage() {

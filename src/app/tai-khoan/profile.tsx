@@ -8,8 +8,8 @@ import {
   PositionLabels,
   Rank,
   User,
-} from "@/app/models/User";
-import { createUser, getUserById, updateUser } from "@/app/services/service";
+} from "@/models/User";
+import { createUser, getUserById, updateUser } from "@/services/service";
 import {
   Card,
   Input,
@@ -21,8 +21,8 @@ import {
 } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { MiddlewareAuthen } from "../middleware/Authen";
-import { getCookieUser } from "../services/authService";
+import { MiddlewareAuthen } from "../../middleware/Authen";
+import { getCookieUser } from "../../services/authService";
 
 function IndexPage() {
   const { addAlert } = useAlert();

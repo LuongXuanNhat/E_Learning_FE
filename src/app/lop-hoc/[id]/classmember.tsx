@@ -1,15 +1,15 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
-import { Class } from "@/app/models/Classes";
-import { Enrollment } from "@/app/models/Enrollment";
-import { Position } from "@/app/models/User";
-import IsRole from "@/app/services/authService";
+import { Class } from "@/models/Classes";
+import { Enrollment } from "@/models/Enrollment";
+import { Position } from "@/models/User";
+import IsRole from "@/services/authService";
 import {
   fetchStudentClass,
   getClassById,
   removeStudentFromClass,
-} from "@/app/services/service";
+} from "@/services/service";
 import { Button, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";

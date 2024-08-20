@@ -6,16 +6,16 @@ import {
   Option,
   IconButton,
 } from "@material-tailwind/react";
-import { Position, User } from "../models/User";
-import { deleteClass, fetchCourseClass, fetchUsers } from "../services/service";
+import { Position, User } from "../../models/User";
+import { deleteClass, fetchCourseClass, fetchUsers } from "../../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
 import { format } from "date-fns";
-import { Class } from "../models/Classes";
+import { Class } from "../../models/Classes";
 import loading from "../components/loading";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
-import { MiddlewareAuthor } from "../middleware/Author";
+import { MiddlewareAuthor } from "../../middleware/Author";
 
 function ClassesManager() {
   const [users, setClases] = useState<Class[]>([]);

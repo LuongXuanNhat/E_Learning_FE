@@ -1,15 +1,15 @@
 import { Metadata } from "next";
 import { memo, useEffect, useState } from "react";
-import { Enrollment } from "./models/Enrollment";
+import { Enrollment } from "../models/Enrollment";
 import { useAlert } from "./components/Alert/alertbase";
-import { fetchMyClasses, fetchTeacherClasses } from "./services/service";
+import { fetchMyClasses, fetchTeacherClasses } from "../services/service";
 import Loading from "./components/loading";
 import Pagination from "./components/paging";
 import { Button, Typography } from "@material-tailwind/react";
-import { MiddlewareAuthor } from "./middleware/Author";
-import { Position } from "./models/User";
+import { MiddlewareAuthor } from "../middleware/Author";
+import { Position } from "../models/User";
 import { format } from "date-fns";
-import { Class } from "./models/Classes";
+import { Class } from "../models/Classes";
 
 function TeacherClasses() {
   const [loading, setLoading] = useState(true);

@@ -1,16 +1,16 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
-import { Class } from "@/app/models/Classes";
-import { Course } from "@/app/models/Course";
-import { User } from "@/app/models/User";
+import { Class } from "@/models/Classes";
+import { Course } from "@/models/Course";
+import { User } from "@/models/User";
 import {
   createClass,
   fetchCourses,
   fetchUsers,
   getClassById,
   updateClass,
-} from "@/app/services/service";
+} from "@/services/service";
 import {
   Card,
   Input,

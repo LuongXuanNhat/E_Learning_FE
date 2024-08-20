@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { LoginDto } from "../components/login_card/loginDto";
+import { LoginDto } from "../app/components/login_card/loginDto";
 import { Position, PositionLabels, User } from "../models/User";
 import { apiBase } from "./service";
 import Cookies from "js-cookie";

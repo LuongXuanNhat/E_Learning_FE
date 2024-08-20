@@ -6,14 +6,14 @@ import {
   Option,
   IconButton,
 } from "@material-tailwind/react";
-import { Position, User } from "../models/User";
-import { deleteUser, fetchUsers } from "../services/service";
+import { Position, User } from "../../models/User";
+import { deleteUser, fetchUsers } from "../../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
 import { format } from "date-fns";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
-import { MiddlewareAuthor } from "../middleware/Author";
+import { MiddlewareAuthor } from "../../middleware/Author";
 
 function EmployeeManager() {
   const [users, setUsers] = useState<User[]>([]);

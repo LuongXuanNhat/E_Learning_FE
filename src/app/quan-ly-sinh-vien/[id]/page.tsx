@@ -8,8 +8,8 @@ import {
   PositionLabels,
   Rank,
   User,
-} from "@/app/models/User";
-import { createUser, getUserById, updateUser } from "@/app/services/service";
+} from "@/models/User";
+import { createUser, getUserById, updateUser } from "@/services/service";
 import {
   Card,
   Input,

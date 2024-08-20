@@ -1,4 +1,5 @@
-import { LoginDto } from "../components/login_card/loginDto";
+import { Attendance } from "@/models/Attendance";
+import { LoginDto } from "../app/components/login_card/loginDto";
 import { Class } from "../models/Classes";
 import { Course } from "../models/Course";
 import { Enrollment } from "../models/Enrollment";
@@ -9,7 +10,7 @@ import { User } from "../models/User";
 import { getCookieUser } from "./authService";
 
 // const apiBase = "http://192.168.1.83:3000/api";
-export const apiBase = "http://localhost:3000/api";
+export const apiBase = "http://localhost:3002/api";
 
 // USER
 export async function fetchUsers(): Promise<User[]> {
@@ -676,6 +677,52 @@ export async function getFeedbackById(id: number) {
     headers: {
       "Content-Type": "application/json",
     },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+
+//    ATTENDANCE 
+export async function fetchAttendances(id: number): Promise<Attendance[]> {
+  const response = await fetch(apiBase + "/attendances/class/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+export async function getCheckRollCall(id: number) {
+  const response = await fetch(apiBase + "/attendances/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function createAttendance(data: Attendance) {
+  data.student_id = getCookieUser()!.user_id;
+  data.created_at = new Date();
+  const response = await fetch(apiBase + "/attendances", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
   if (!response.ok) {
     const errorData = await response.json();

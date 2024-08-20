@@ -2,10 +2,10 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import YouTubePlayer from "@/app/components/youtubeplayer";
-import { Feedback } from "@/app/models/Feedback";
-import { Lession } from "@/app/models/Lession";
-import { Position } from "@/app/models/User";
-import IsRole, { getCookieUser } from "@/app/services/authService";
+import { Feedback } from "@/models/Feedback";
+import { Lession } from "@/models/Lession";
+import { Position } from "@/models/User";
+import IsRole, { getCookieUser } from "@/services/authService";
 import {
   createFeedback,
   createLession,
@@ -14,7 +14,7 @@ import {
   fetchLessions,
   getLessionById,
   updateLession,
-} from "@/app/services/service";
+} from "@/services/service";
 import { Button, Input, Textarea, Typography } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";

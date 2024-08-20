@@ -1,14 +1,14 @@
 "use client";
 import { Button, Select, Typography, Option } from "@material-tailwind/react";
-import { deleteCourse, fetchCourses } from "../services/service";
+import { deleteCourse, fetchCourses } from "../../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
-import { Course } from "../models/Course";
+import { Course } from "../../models/Course";
 import { format } from "date-fns";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
-import { MiddlewareAuthor } from "../middleware/Author";
-import { Position } from "../models/User";
+import { MiddlewareAuthor } from "../../middleware/Author";
+import { Position } from "../../models/User";
 
 function EmployeeManager() {
   const [courses, setCourses] = useState<Course[]>([]);

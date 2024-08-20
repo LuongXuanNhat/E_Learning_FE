@@ -14,9 +14,9 @@ import {
 } from "@heroicons/react/24/solid";
 import RegisterCourse from "./registerCourse";
 import RegistedCourse from "./registedCourse";
-import { MiddlewareAuthen } from "../middleware/Authen";
-import { MiddlewareAuthor } from "../middleware/Author";
-import { Position } from "../models/User";
+import { MiddlewareAuthen } from "../../middleware/Authen";
+import { MiddlewareAuthor } from "../../middleware/Author";
+import { Position } from "../../models/User";
 
 function RegisterCourseHome() {
   const [state, setState] = useState(false);

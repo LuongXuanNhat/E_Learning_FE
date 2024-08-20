@@ -2,16 +2,16 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import YouTubePlayer from "@/app/components/youtubeplayer";
-import { Lession } from "@/app/models/Lession";
-import { Position } from "@/app/models/User";
-import IsRole from "@/app/services/authService";
+import { Lession } from "@/models/Lession";
+import { Position } from "@/models/User";
+import IsRole from "@/services/authService";
 import {
   createLession,
   deleteLession,
   fetchLessions,
   getLessionById,
   updateLession,
-} from "@/app/services/service";
+} from "@/services/service";
 import { Button, Input, Textarea, Typography } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
