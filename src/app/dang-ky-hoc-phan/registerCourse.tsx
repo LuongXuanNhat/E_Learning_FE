@@ -6,19 +6,19 @@ import {
   Option,
   IconButton,
 } from "@material-tailwind/react";
-import { User } from "../models/User";
+import { User } from "../../models/User";
 import {
   CancelRegisterCourseByStudent,
   deleteClass,
   fetchClassRegister,
   fetchUsers,
   RegisterCourseByStudent,
-} from "../services/service";
+} from "../../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
 import { format } from "date-fns";
-import { Class } from "../models/Classes";
+import { Class } from "../../models/Classes";
 import loading from "../components/loading";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
 

@@ -6,9 +6,9 @@ import {
   TabsBody,
   TabPanel,
 } from "@material-tailwind/react";
-import { Position, User } from "../models/User";
+import { Position, User } from "../../models/User";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
-import { MiddlewareAuthor } from "../middleware/Author";
+import { MiddlewareAuthor } from "../../middleware/Author";
 import OfficalClass from "./officalClass";
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import RegisterClass from "./registerClass";

@@ -24,9 +24,9 @@ import {
   Square3Stack3DIcon,
   UserCircleIcon,
 } from "@heroicons/react/16/solid";
-import { Position, User } from "../models/User";
+import { Position, User } from "../../models/User";
 import { set } from "date-fns";
-import IsRole, { getCookieUser, Logout } from "../services/authService";
+import IsRole, { getCookieUser, Logout } from "../../services/authService";
 import { AlertType, useAlert } from "./Alert/alertbase";
 import { useRouter } from "next/navigation";
 

@@ -1,15 +1,15 @@
 "use client";
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import Loading from "@/app/components/loading";
-import { MiddlewareAuthor } from "@/app/middleware/Author";
-import { Class } from "@/app/models/Classes";
-import { Position, User } from "@/app/models/User";
+import { MiddlewareAuthor } from "@/middleware/Author";
+import { Class } from "@/models/Classes";
+import { Position, User } from "@/models/User";
 import {
   fetchStudentClass,
   fetchStudents,
   getClassById,
   updateMemberInClass,
-} from "@/app/services/service";
+} from "@/services/service";
 import {
   Select,
   Option,

@@ -1,17 +1,17 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
-import { MiddlewareAuthen } from "@/app/middleware/Authen";
-import { Class } from "@/app/models/Classes";
-import { Course } from "@/app/models/Course";
-import { Position, User } from "@/app/models/User";
+import { MiddlewareAuthen } from "@/middleware/Authen";
+import { Class } from "@/models/Classes";
+import { Course } from "@/models/Course";
+import { Position, User } from "@/models/User";
 import {
   createClass,
   fetchCourses,
   fetchUsers,
   getClassById,
   updateClass,
-} from "@/app/services/service";
+} from "@/services/service";
 import {
   Card,
   Input,
@@ -40,8 +40,9 @@ import RoomChatClass from "./roomchat";
 import ClassMember from "./classmember";
 import ClassReview from "./classreview";
 import StudyPoint from "./studypoint";
-import IsRole from "@/app/services/authService";
+import IsRole from "@/services/authService";
 import LessionVideo from "./lession";
+import AttendanceClass from "./attendance";
 
 function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
@@ -138,6 +139,15 @@ function IndexPage({ params }: { params: { id: number } }) {
         Position.EDUCATION,
         Position.SECRETARY,
         Position.SUB_TEACHER,
+      ],
+    },
+    {
+      label: "Điểm danh",
+      value: "attendance",
+      icon: Square3Stack3DIcon,
+      desc: <AttendanceClass id={params.id} />,
+      allow: [
+        Position.SUB_TEACHER
       ],
     },
     {

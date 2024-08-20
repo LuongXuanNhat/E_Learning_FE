@@ -9,7 +9,7 @@ import {
   TabsHeader,
   Typography,
 } from "@material-tailwind/react";
-import { MiddlewareAuthen } from "../middleware/Authen";
+import { MiddlewareAuthen } from "../../middleware/Authen";
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import Profile from "./profile";
 import React from "react";

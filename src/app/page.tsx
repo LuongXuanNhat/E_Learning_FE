@@ -1,7 +1,7 @@
 "use client";
 
-import { getCookieUser } from "./services/authService";
-import { Position, PositionLabels, User } from "./models/User";
+import { getCookieUser } from "../services/authService";
+import { Position, PositionLabels, User } from "../models/User";
 import MyClass from "./myclasses";
 import { useEffect, useState } from "react";
 import Head from "./head";

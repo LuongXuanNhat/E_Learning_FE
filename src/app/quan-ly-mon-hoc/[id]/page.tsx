@@ -2,10 +2,10 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import Loading from "@/app/components/loading";
-import { MiddlewareAuthor } from "@/app/middleware/Author";
-import { Course, de_xuat_ten_khoa_hoc } from "@/app/models/Course";
-import { Subject } from "@/app/models/Subject";
-import { Position, User } from "@/app/models/User";
+import { MiddlewareAuthor } from "@/middleware/Author";
+import { Course, de_xuat_ten_khoa_hoc } from "@/models/Course";
+import { Subject } from "@/models/Subject";
+import { Position, User } from "@/models/User";
 import {
   createCourse,
   createUser,
@@ -13,7 +13,7 @@ import {
   getSubjectById,
   updateCourse,
   updateSubject,
-} from "@/app/services/service";
+} from "@/services/service";
 import {
   Card,
   Input,

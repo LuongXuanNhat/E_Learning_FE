@@ -7,8 +7,8 @@ import {
   PositionLabels,
   Rank,
   User,
-} from "@/app/models/User";
-import { createUser } from "@/app/services/service";
+} from "@/models/User";
+import { createUser } from "@/services/service";
 import {
   Card,
   Input,

@@ -1,15 +1,15 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
-import { MiddlewareAuthor } from "@/app/middleware/Author";
+import { MiddlewareAuthor } from "@/middleware/Author";
 import {
   getPositionFromString,
   Position,
   PositionLabels,
   Rank,
   User,
-} from "@/app/models/User";
-import { createUser } from "@/app/services/service";
+} from "@/models/User";
+import { createUser } from "@/services/service";
 import {
   Card,
   Input,

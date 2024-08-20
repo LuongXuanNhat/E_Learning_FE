@@ -1,15 +1,14 @@
 "use client";
 import { Button, Select, Typography, Option } from "@material-tailwind/react";
-import { deleteSubject, fetchSubjects } from "../services/service";
+import { deleteSubject, fetchSubjects } from "../../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
-import { Subject } from "../models/Subject";
+import { Subject } from "../../models/Subject";
 import { format } from "date-fns";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
-import { middleware } from "../lib/ultis";
-import { MiddlewareAuthor } from "../middleware/Author";
-import { Position } from "../models/User";
+import { MiddlewareAuthor } from "../../middleware/Author";
+import { Position } from "../../models/User";
 
 function EmployeeManager() {
   const [subjects, setSubjects] = useState<Subject[]>([]);

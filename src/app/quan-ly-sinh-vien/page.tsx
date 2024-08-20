@@ -6,8 +6,8 @@ import {
   Option,
   IconButton,
 } from "@material-tailwind/react";
-import { User } from "../models/User";
-import { deleteUser, fetchStudents, fetchUsers } from "../services/service";
+import { User } from "../../models/User";
+import { deleteUser, fetchStudents, fetchUsers } from "../../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";

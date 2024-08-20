@@ -2,20 +2,24 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import EditorHTML from "@/app/components/editor";
-import { Blog } from "@/app/models/Blog";
-import { Position } from "@/app/models/User";
-import IsRole from "@/app/services/authService";
-import { deleteBlog, getBlogOfClass, saveBlog } from "@/app/services/service";
+import Loading from "@/app/components/loading";
+import { Blog } from "@/models/Blog";
+import { Position } from "@/models/User";
+import { Attendance } from "@/models/Attendance";
+import IsRole from "@/services/authService";
+import { createAttendance, deleteBlog, getBlogOfClass, getCheckRollCall, saveBlog } from "@/services/service";
 import { Button } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 
 export default function DashboardclassName({ id }: { id: number }) {
   const [isShow, setIsShow] = useState(true);
+  const [isRollCall, setIsRollCall] = useState(false);
   const [blogs, setCurrentBlog] = useState<Blog[]>([]);
   const [editorContent, setEditorContent] = useState("");
   const { addAlert } = useAlert();
   const [canRole, setRole] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchBlogData = async () => {
     try {
@@ -25,9 +29,17 @@ export default function DashboardclassName({ id }: { id: number }) {
       addAlert(AlertType.error, "Có lỗi lấy bài đăng:" + error);
     }
   };
+
+  const getRollCall = async () => {
+    const data = await getCheckRollCall(id);
+    setIsRollCall(data);
+  }
   useEffect(() => {
     setRole(IsRole([Position.ADVISOR, Position.SUB_TEACHER]));
     fetchBlogData();
+    getRollCall();
+
+    setLoading(false);
   }, []);
 
   const showEditor = () => {
@@ -58,10 +70,40 @@ export default function DashboardclassName({ id }: { id: number }) {
     }
   };
 
+  const formatDate = (date: Date): string => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+  async function createNewAttendance() {
+    try {
+      const obj: Attendance = ({
+        attendance_id: 0,
+        class_id: id,
+        student_id: 0,
+        date: new Date(),
+        status: 'Điểm danh ngày ' + formatDate(new Date()),
+        created_at: new Date(),
+      });
+
+      await createAttendance(obj);
+    } catch (error) {
+      
+    }
+  }
+
+  if (loading) return <Loading />;
   return (
     <div>
       <div className="flex flex-col lg:flex-row">
-        <div className="md:w-96"></div>
+        <div className="md:w-96">
+          {
+            isRollCall && (<Button color="amber" ripple={true} onClick={createNewAttendance}>
+              Điểm danh
+            </Button>)
+          }
+        </div>
         {canRole && (
           <div className="w-full">
             <button

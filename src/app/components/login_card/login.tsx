@@ -11,8 +11,8 @@ import {
 import { AlertType, useAlert } from "../Alert/alertbase";
 import { LoginDto } from "./loginDto";
 import { useState } from "react";
-import { CookieName } from "@/app/models/keyCookie";
-import { getCookie, login, removeCookie } from "@/app/services/authService";
+import { CookieName } from "@/models/keyCookie";
+import { getCookie, login, removeCookie } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/dist/client/components/navigation";
 
