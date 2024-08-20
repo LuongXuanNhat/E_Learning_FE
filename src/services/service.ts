@@ -10,7 +10,7 @@ import { User } from "../models/User";
 import { getCookieUser } from "./authService";
 
 // const apiBase = "http://192.168.1.83:3000/api";
-export const apiBase = "http://localhost:3002/api";
+export const apiBase = "http://localhost:3000/api";
 
 // USER
 export async function fetchUsers(): Promise<User[]> {
@@ -685,8 +685,7 @@ export async function getFeedbackById(id: number) {
   return response.json();
 }
 
-
-//    ATTENDANCE 
+//    ATTENDANCE
 export async function fetchAttendances(id: number): Promise<Attendance[]> {
   const response = await fetch(apiBase + "/attendances/class/" + id, {
     method: "GET",
@@ -714,6 +713,25 @@ export async function getCheckRollCall(id: number) {
   }
   return response.json();
 }
+
+export async function getTookAttendance(id: number) {
+  const user_id = getCookieUser()!.user_id;
+  const response = await fetch(
+    apiBase + "/attendances/myattentdence/" + id + "/" + user_id,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
 export async function createAttendance(data: Attendance) {
   data.student_id = getCookieUser()!.user_id;
   data.created_at = new Date();

@@ -2,6 +2,7 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import YouTubePlayer from "@/app/components/youtubeplayer";
+import { MiddlewareAuthen } from "@/middleware/Authen";
 import { Lession } from "@/models/Lession";
 import { Position } from "@/models/User";
 import IsRole from "@/services/authService";
@@ -16,7 +17,7 @@ import { Button, Input, Textarea, Typography } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
-export default function LessionVideo({ id }: { id: number }) {
+function LessionVideo({ id }: { id: number }) {
   const [isShow, setIsShow] = useState(true);
   const [canRole, setRole] = useState(false);
   const [titleEditor, setTitleEditor] = useState(false);
@@ -32,9 +33,7 @@ export default function LessionVideo({ id }: { id: number }) {
   const { addAlert } = useAlert();
 
   useEffect(() => {
-    setRole(
-      IsRole([Position.ADVISOR, Position.SUB_TEACHER])
-    );
+    setRole(IsRole([Position.ADVISOR, Position.SUB_TEACHER]));
 
     fetchLessionData();
   }, []);
@@ -252,3 +251,4 @@ export default function LessionVideo({ id }: { id: number }) {
     </div>
   );
 }
+export default MiddlewareAuthen(LessionVideo);

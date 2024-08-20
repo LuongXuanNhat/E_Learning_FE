@@ -2,6 +2,7 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import YouTubePlayer from "@/app/components/youtubeplayer";
+import { MiddlewareAuthen } from "@/middleware/Authen";
 import { Feedback } from "@/models/Feedback";
 import { Lession } from "@/models/Lession";
 import { Position } from "@/models/User";
@@ -19,7 +20,7 @@ import { Button, Input, Textarea, Typography } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
-export default function ClassReview({ id }: { id: number }) {
+function ClassReview({ id }: { id: number }) {
   const [isShow, setIsShow] = useState(true);
   const [canRole, setRole] = useState(false);
   const [titleEditor, setTitleEditor] = useState(false);
@@ -215,3 +216,4 @@ export default function ClassReview({ id }: { id: number }) {
     </div>
   );
 }
+export default MiddlewareAuthen(ClassReview);

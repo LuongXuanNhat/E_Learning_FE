@@ -1,11 +1,11 @@
 "use client";
 
-import { getCookieUser } from "../services/authService";
-import { Position, PositionLabels, User } from "../models/User";
 import MyClass from "./myclasses";
 import { useEffect, useState } from "react";
 import Head from "./head";
 import Teacherclasses from "./teacherclasses";
+import { Position, PositionLabels, User } from "@/models/User";
+import { getCookieUser } from "@/services/authService";
 
 export default function Page() {
   const [isCan, setIsCan] = useState(true);
@@ -42,9 +42,7 @@ export default function Page() {
         </div>
       ) : user?.chuc_vu === PositionLabels[Position.SUB_TEACHER] ||
         user?.chuc_vu === PositionLabels[Position.ADVISOR] ? (
-        <div>
-          <Teacherclasses />
-        </div>
+        <Teacherclasses />
       ) : (
         <MyClass />
       )}

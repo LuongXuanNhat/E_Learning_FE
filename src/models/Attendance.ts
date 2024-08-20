@@ -9,5 +9,5 @@ export interface Attendance {
   created_at: Date;
 
   // Associations
-  Student?: User;
+  User?: User;
 }
