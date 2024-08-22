@@ -15,21 +15,26 @@ export default function AttendanceSummary({ id }: { id: number }) {
   const getAttendance = async () => {
     try {
       const data: Attendance[] = await fetchAttendances(id);
-      
+
       // Group by student_id and count attendance records
-      const attendanceSummary = data.reduce((acc: StudentAttendanceSummary[], attendance) => {
-        const existing = acc.find(item => item.student_id === attendance.student_id);
-        if (existing) {
-          existing.attendance_count += 1;
-        } else {
-          acc.push({
-            student_id: attendance.student_id,
-            student_name: attendance.User?.name || "Unknown",
-            attendance_count: 1,
-          });
-        }
-        return acc;
-      }, []);
+      const attendanceSummary = data.reduce(
+        (acc: StudentAttendanceSummary[], attendance) => {
+          const existing = acc.find(
+            (item) => item.student_id === attendance.student_id
+          );
+          if (existing) {
+            existing.attendance_count += 1;
+          } else {
+            acc.push({
+              student_id: attendance.student_id,
+              student_name: attendance.User?.name || "Unknown",
+              attendance_count: 1,
+            });
+          }
+          return acc;
+        },
+        []
+      );
 
       setSummary(attendanceSummary);
     } catch (error) {
@@ -42,8 +47,10 @@ export default function AttendanceSummary({ id }: { id: number }) {
   }, []);
 
   return (
-  <div>
-      <Typography variant="h5" className="text-center pb-5">Tổng kết điểm danh học viên</Typography>
+    <div>
+      <Typography variant="h5" className="text-center pb-5">
+        Tổng kết điểm danh học viên
+      </Typography>
       <div>
         <table className="w-full text-left table-auto min-w-max">
           <thead>
@@ -58,11 +65,6 @@ export default function AttendanceSummary({ id }: { id: number }) {
                   Số lần điểm danh
                 </p>
               </th>
-              {/* <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                  Hành động
-                </p>
-              </th> */}
             </tr>
           </thead>
           <tbody>
@@ -78,18 +80,11 @@ export default function AttendanceSummary({ id }: { id: number }) {
                     {item.attendance_count}
                   </p>
                 </td>
-                {/* <td className="p-4 border-b border-blue-gray-50">
-                  <button
-                    onClick={() => handleAction(item.student_id)}
-                    className="text-blue-500 underline"
-                  >
-                    Xem chi tiết
-                  </button>
-                </td> */}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>)
+    </div>
+  );
 }

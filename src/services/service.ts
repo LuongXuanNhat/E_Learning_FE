@@ -8,6 +8,7 @@ import { Lession } from "../models/Lession";
 import { Subject } from "../models/Subject";
 import { User } from "../models/User";
 import { getCookieUser } from "./authService";
+import { Grade } from "@/models/Grade";
 
 // const apiBase = "http://192.168.1.83:3000/api";
 export const apiBase = "http://localhost:3002/api";
@@ -749,5 +750,45 @@ export async function createAttendance(data: Attendance) {
   return response.json();
 }
 
-
 //        GRADE STUDENT
+
+export async function getGradeOfClass(id: number) {
+  const response = await fetch(apiBase + "/grades/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateStudentScoreInClass(id: number) {
+  const response = await fetch(apiBase + "/grades/update/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateGrades(grades: Grade[]) {
+  const response = await fetch(apiBase + "/grades/update", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(grades),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
