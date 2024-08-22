@@ -69,3 +69,10 @@ export enum Rank {
   BinhNhi = "Binh nhất",
   BinhNhat = "Binh nhì",
 }
+
+
+export interface StudentAttendanceSummary {
+  student_id: number;
+  student_name: string;
+  attendance_count: number;
+}

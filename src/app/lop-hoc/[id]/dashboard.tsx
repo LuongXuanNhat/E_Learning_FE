@@ -103,7 +103,7 @@ function DashboardclassName({ id }: { id: number }) {
       };
 
       var result = await createAttendance(obj);
-      console.log(result);
+
       await checkTookAttendance();
       addAlert(AlertType.success, result);
     } catch (error: any) {

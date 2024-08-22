@@ -10,7 +10,7 @@ import { User } from "../models/User";
 import { getCookieUser } from "./authService";
 
 // const apiBase = "http://192.168.1.83:3000/api";
-export const apiBase = "http://localhost:3000/api";
+export const apiBase = "http://localhost:3002/api";
 
 // USER
 export async function fetchUsers(): Promise<User[]> {
@@ -748,3 +748,6 @@ export async function createAttendance(data: Attendance) {
   }
   return response.json();
 }
+
+
+//        GRADE STUDENT
