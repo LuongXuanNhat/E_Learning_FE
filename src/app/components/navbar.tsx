@@ -52,11 +52,10 @@ export function StickyNavbar() {
 
   const logout = () => {
     if (Logout()) {
+      router.push("/");
       setUser(undefined);
       setIsLoggedIn(false);
       addAlert(AlertType.success, "Đã đăng xuất");
-      window.location.reload();
-      router.push("/");
     }
   };
   const handleOpen = () => setOpen((cur) => !cur);

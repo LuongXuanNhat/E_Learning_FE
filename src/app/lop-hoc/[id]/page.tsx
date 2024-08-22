@@ -43,6 +43,7 @@ import StudyPoint from "./studypoint";
 import IsRole from "@/services/authService";
 import LessionVideo from "./lession";
 import AttendanceClass from "./attendance";
+import Loading from "@/app/components/loading";
 
 function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
@@ -82,17 +83,15 @@ function IndexPage({ params }: { params: { id: number } }) {
     },
   });
   const [allowedTabs, setAllowedTabs] = useState<TabItem[]>([]);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [loadedTabs, setLoadedTabs] = useState(["dashboard"]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const dataClass = await getClassById(params.id);
-      setClass(dataClass);
-    };
-    const allowed = data.filter(({ allow }) => IsRole(allow));
-    setAllowedTabs(allowed);
-
-    fetchData();
-  }, []);
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    if (!loadedTabs.includes(newTab)) {
+      setLoadedTabs((prev) => [...prev, newTab]);
+    }
+  };
 
   interface TabItem {
     label: string;
@@ -107,7 +106,7 @@ function IndexPage({ params }: { params: { id: number } }) {
     allow: Position[];
   }
 
-  const data: TabItem[] = [
+  let data: TabItem[] = [
     {
       label: "Bảng tin",
       value: "dashboard",
@@ -155,7 +154,7 @@ function IndexPage({ params }: { params: { id: number } }) {
       value: "studypoint",
       icon: Square3Stack3DIcon,
       desc: <StudyPoint id={params.id} />,
-      allow: [Position.ADVISOR, Position.SECRETARY],
+      allow: [Position.SUB_TEACHER],
     },
     {
       label: "Đánh giá lớp học",
@@ -165,6 +164,31 @@ function IndexPage({ params }: { params: { id: number } }) {
       allow: [Position.ADVISOR, Position.SECRETARY, Position.STUDENT],
     },
   ];
+
+  const fetchData = async () => {
+    const dataClass = await getClassById(params.id);
+    setClass(dataClass);
+
+    if(dataClass && !dataClass.course_id){
+      data = data.filter(
+        (item) => !["attendance", "studypoint"].includes(item.value)
+      );
+      const allowed = data.filter(({ allow }) => IsRole(allow));
+      setAllowedTabs(allowed);
+    } else {
+      const allowed = data.filter(({ allow }) => IsRole(allow));
+      setAllowedTabs(allowed);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
+   
+
   return (
     <div className="py-3">
       <Card color="transparent" shadow={false}>
@@ -192,11 +216,11 @@ function IndexPage({ params }: { params: { id: number } }) {
           </div>
         </div>
       </Card>
-      <Tabs value="dashboard" className="py-4">
+      <Tabs value={activeTab} className="py-4">
         <TabsHeader>
           {allowedTabs.map(({ label, value, icon }) => (
             <Tab key={value} value={value}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" onClick={()=> handleTabChange(value)}>
                 {React.createElement(icon, { className: "w-5 h-5" })}
                 {label}
               </div>
@@ -206,7 +230,7 @@ function IndexPage({ params }: { params: { id: number } }) {
         <TabsBody>
           {data.map(({ value, desc }) => (
             <TabPanel key={value} value={value}>
-              {desc}
+              {loadedTabs.includes(value) ? desc : <Loading />}
             </TabPanel>
           ))}
         </TabsBody>
