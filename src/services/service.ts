@@ -168,6 +168,19 @@ export async function getCourseById(id: number) {
 }
 
 // CLASSES
+export async function fetchClasses(): Promise<Class[]> {
+  const response = await fetch(apiBase + "/classes", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
 export async function fetchManagerClass(): Promise<Class[]> {
   const response = await fetch(apiBase + "/classes/t/1", {
     method: "GET",

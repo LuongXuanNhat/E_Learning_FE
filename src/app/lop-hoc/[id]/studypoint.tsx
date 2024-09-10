@@ -195,7 +195,7 @@ function StudyPoint({ id }: { id: number }) {
                 <td className="p-4 border-b-2 border-l-2  border-blue-gray-50">
                   <input
                     type="number"
-                    value={item.process_grade.toFixed(2)}
+                    value={item.process_grade}
                     onChange={(e) =>
                       handleInputChange(
                         item.grade_id,
@@ -209,7 +209,7 @@ function StudyPoint({ id }: { id: number }) {
                 <td className="p-4 border-b-2 border-l-2 border-blue-gray-50">
                   <input
                     type="number"
-                    value={item.final_grade.toFixed(2)}
+                    value={item.final_grade}
                     onChange={(e) =>
                       handleInputChange(
                         item.grade_id,
@@ -223,7 +223,7 @@ function StudyPoint({ id }: { id: number }) {
                 <td className="p-4 border-b-2 border-l-4 border-blue-700">
                   <input
                     type="number"
-                    value={item.summary_score.toFixed(2)}
+                    value={item.summary_score}
                     onChange={(e) =>
                       handleInputChange(
                         item.grade_id,

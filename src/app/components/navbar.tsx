@@ -51,12 +51,12 @@ export function StickyNavbar() {
   const router = useRouter();
 
   const logout = () => {
-    if (Logout()) {
-      router.push("/");
-      setUser(undefined);
-      setIsLoggedIn(false);
-      addAlert(AlertType.success, "Đã đăng xuất");
-    }
+    Logout();
+    setUser(undefined);
+    router.push("/");
+    setIsLoggedIn(false);
+
+    addAlert(AlertType.success, "Đã đăng xuất");
   };
   const handleOpen = () => setOpen((cur) => !cur);
   React.useEffect(() => {
@@ -101,12 +101,24 @@ export function StickyNavbar() {
         </a>
       </Typography>
       {isClient && IsRole([Position.EDUCATION]) ? <NavListMenu /> : null}
+      {isClient && IsRole([Position.SECRETARY, Position.ADVISOR]) ? (
+        <Typography
+          as="li"
+          variant="small"
+          color="blue"
+          className="p-1 font-bold"
+        >
+          <a href="/danh-gia-lop-hoc" className="flex items-center">
+            Quản lý đánh giá lớp học
+          </a>
+        </Typography>
+      ) : null}
       {isClient && IsRole([Position.STUDENT]) ? (
         <Typography
           as="li"
           variant="small"
-          color="blue-gray"
-          className="p-1 font-normal"
+          color="blue"
+          className="p-1 font-bold"
         >
           <a href="/dang-ky-hoc-phan" className="flex items-center">
             Đăng ký học phần
@@ -366,8 +378,8 @@ function NavListMenu() {
       <Menu allowHover open={isMenuOpen} handler={setIsMenuOpen}>
         <MenuHandler>
           <Typography as="a" href="#" variant="small" className="font-normal">
-            <MenuItem className="hidden items-center gap-2 font-medium text-blue-gray-900 lg:flex lg:rounded-full">
-              <Square3Stack3DIcon className="h-[18px] w-[18px] text-blue-gray-500" />{" "}
+            <MenuItem className="hidden items-center gap-2  text-blue-500  font-bold lg:flex lg:rounded-full">
+              <Square3Stack3DIcon className="h-[18px] w-[18px] text-blue-500 " />{" "}
               Quản lý đào tạo{" "}
               <ChevronDownIcon
                 strokeWidth={2}

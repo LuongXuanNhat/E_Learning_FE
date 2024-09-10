@@ -58,13 +58,13 @@ function LessionVideo({ id }: { id: number }) {
         addAlert(AlertType.info, "Tiêu đề quá ngắn!");
         return;
       }
-      if (isValidYouTubeUrl(lession.link)) {
-        addAlert(
-          AlertType.info,
-          "Link video youtube không hợp lệ! Bạn hãy kiểm tra lại"
-        );
-        return;
-      }
+      // if (isValidYouTubeUrl(lession.link)) {
+      //   addAlert(
+      //     AlertType.info,
+      //     "Link video youtube không hợp lệ! Bạn hãy kiểm tra lại"
+      //   );
+      //   return;
+      // }
 
       lession.class_id = id;
       if (titleEditor) await updateLession(lession);

@@ -22,6 +22,4 @@ export interface Class {
   Attendances?: Attendance[];
   Feedbacks?: Feedback[];
   Grades?: Grade[];
-  // ChatRooms?: ChatRoom[];
-  // Blogs?: Blog[];
 }
