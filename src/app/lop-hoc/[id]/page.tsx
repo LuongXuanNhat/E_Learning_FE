@@ -145,9 +145,7 @@ function IndexPage({ params }: { params: { id: number } }) {
       value: "attendance",
       icon: Square3Stack3DIcon,
       desc: <AttendanceClass id={params.id} />,
-      allow: [
-        Position.SUB_TEACHER
-      ],
+      allow: [Position.SUB_TEACHER],
     },
     {
       label: "Điểm học tập",
@@ -169,7 +167,7 @@ function IndexPage({ params }: { params: { id: number } }) {
     const dataClass = await getClassById(params.id);
     setClass(dataClass);
 
-    if(dataClass && !dataClass.course_id){
+    if (dataClass && !dataClass.course_id) {
       data = data.filter(
         (item) => !["attendance", "studypoint"].includes(item.value)
       );
@@ -181,13 +179,9 @@ function IndexPage({ params }: { params: { id: number } }) {
     }
   };
 
-
   useEffect(() => {
     fetchData();
   }, []);
-
-
-   
 
   return (
     <div className="py-3">
@@ -199,17 +193,20 @@ function IndexPage({ params }: { params: { id: number } }) {
             </Typography>
             <Typography as="div" color="gray">
               {classes.course_id ? (
-                <div>
-                  <span className="pr-1">Từ ngày</span>
-                  {format(
-                    new Date(classes.Course!.start_date.toString()),
-                    "dd-MM-yyyy"
-                  )}
-                  <span className="px-1"> đến ngày </span>
-                  {format(
-                    new Date(classes.Course!.end_date.toString()),
-                    "dd-MM-yyyy"
-                  )}
+                <div className="flex flex-wrap">
+                  <div>
+                    <span className="pr-1">Từ ngày</span>
+                    {format(
+                      new Date(classes.Course!.start_date.toString()),
+                      "dd-MM-yyyy"
+                    )}
+                    <span className="px-1"> đến ngày </span>
+                    {format(
+                      new Date(classes.Course!.end_date.toString()),
+                      "dd-MM-yyyy"
+                    )}
+                  </div>
+                  <div className="ml-1">({classes.schedule})</div>
                 </div>
               ) : null}
             </Typography>
@@ -220,7 +217,10 @@ function IndexPage({ params }: { params: { id: number } }) {
         <TabsHeader>
           {allowedTabs.map(({ label, value, icon }) => (
             <Tab key={value} value={value}>
-              <div className="flex items-center gap-2" onClick={()=> handleTabChange(value)}>
+              <div
+                className="flex items-center gap-2"
+                onClick={() => handleTabChange(value)}
+              >
                 {React.createElement(icon, { className: "w-5 h-5" })}
                 {label}
               </div>

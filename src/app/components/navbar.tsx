@@ -26,7 +26,12 @@ import {
 } from "@heroicons/react/16/solid";
 import { Position, User } from "../../models/User";
 import { set } from "date-fns";
-import IsRole, { getCookieUser, Logout } from "../../services/authService";
+import IsRole, {
+  getCookie,
+  getCookieUser,
+  getLocalStorage,
+  Logout,
+} from "../../services/authService";
 import { AlertType, useAlert } from "./Alert/alertbase";
 import { useRouter } from "next/navigation";
 
@@ -281,8 +286,14 @@ const profileMenuItems = [
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [avatar, setAvatar] = React.useState("");
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  React.useEffect(() => {
+    const getAvatar = getLocalStorage("avatar");
+    if (getAvatar) setAvatar(getAvatar);
+  });
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -297,7 +308,7 @@ function ProfileMenu() {
             size="sm"
             alt="tania andrew"
             className="border border-gray-900 p-0.5"
-            src="/images/user2.png"
+            src={avatar ?? "/images/user2.png"}
           />
           <ChevronDownIcon
             strokeWidth={2.5}

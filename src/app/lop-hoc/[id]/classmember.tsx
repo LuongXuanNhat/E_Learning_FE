@@ -62,7 +62,6 @@ export default function ClassMember({ id }: { id: number }) {
   const fetchData = async () => {
     const dataStudents = await fetchStudentClass(id);
     setStudents(dataStudents);
-    console.log(dataStudents);    
   };
   const [students, setStudents] = useState<Enrollment[]>([]);
   useEffect(() => {
@@ -105,7 +104,7 @@ export default function ClassMember({ id }: { id: number }) {
           </div>
           <hr />
         </div>
-        <div> 
+        <div>
           <div className="flex justify-between mt-4">
             <Typography variant="h5">Học viên</Typography>
             <div className="flex items-center">

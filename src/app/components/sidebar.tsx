@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   IconButton,
   Typography,
@@ -32,16 +32,36 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Position } from "@/models/User";
+import { getCookieUser } from "@/services/authService";
+import { Class } from "@/models/Classes";
+import { fetchTeacherClasses } from "@/services/service";
 
 export function SidebarWithBurgerMenu() {
-  const [open, setOpen] = React.useState(0);
+  const [role, setRole] = React.useState<Position>();
+  const [open, setOpen] = React.useState(1);
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [render, setRender] = useState(false);
 
   const handleOpen = (value: any) => {
     setOpen(open === value ? 0 : value);
   };
 
+  useEffect(() => {
+    const loadRole = getCookieUser();
+    setRole(loadRole?.role);
+
+    if (!render) {
+      loadClasses();
+    }
+  });
+  const loadClasses = async () => {
+    const data = await fetchTeacherClasses();
+    setClasses(data);
+    setRender(true);
+  };
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
 
@@ -79,7 +99,7 @@ export function SidebarWithBurgerMenu() {
           <div className="p-2">
             <Input
               icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              label="Search"
+              label="Tìm kiếm"
               crossOrigin=""
             />
           </div>
@@ -95,37 +115,43 @@ export function SidebarWithBurgerMenu() {
                 />
               }
             >
-              <ListItem className="p-0" selected={open === 1}>
-                <AccordionHeader
-                  onClick={() => handleOpen(1)}
-                  className="border-b-0 p-3"
-                >
-                  <ListItemPrefix>
-                    <PresentationChartBarIcon className="h-5 w-5" />
-                  </ListItemPrefix>
-                  <Typography color="blue-gray" className="mr-auto font-normal">
-                    Quản lý nhân sự
-                  </Typography>
-                </AccordionHeader>
-              </ListItem>
+              {role == Position.ADVISOR || role == Position.SUB_TEACHER ? (
+                <ListItem className="p-0" selected={open === 1}>
+                  <AccordionHeader
+                    onClick={() => handleOpen(1)}
+                    className="border-b-0 p-3"
+                  >
+                    <ListItemPrefix>
+                      <PresentationChartBarIcon className="h-5 w-5" />
+                    </ListItemPrefix>
+                    <Typography
+                      color="blue-gray"
+                      className="mr-auto font-normal"
+                    >
+                      Danh sách lớp chat
+                    </Typography>
+                  </AccordionHeader>
+                </ListItem>
+              ) : null}
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    Thêm nhân sự
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    Danh sách nhân sự
-                  </ListItem>
+                  {classes.map((classItem) => (
+                    <ListItem key={classItem.class_id}>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                      </ListItemPrefix>
+                      <a
+                        href={`/lop-hoc/${classItem.class_id}/chat`}
+                        className="w-full h-full"
+                      >
+                        {classItem.name}
+                      </a>
+                    </ListItem>
+                  ))}
                 </List>
               </AccordionBody>
             </Accordion>
-            <Accordion
+            {/* <Accordion
               open={open === 2}
               icon={
                 <ChevronDownIcon
@@ -247,7 +273,7 @@ export function SidebarWithBurgerMenu() {
                   </ListItem>
                 </List>
               </AccordionBody>
-            </Accordion>
+            </Accordion> */}
             <hr className="my-2 border-blue-gray-50" />
             <ListItem>
               <ListItemPrefix>

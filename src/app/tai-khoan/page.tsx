@@ -14,6 +14,7 @@ import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import Profile from "./profile";
 import React from "react";
 import SettingAccount from "./SettingAccount";
+import { MyLearnedModule } from "../learnedmodule";
 
 function IndexPage() {
   const data = [
@@ -28,6 +29,12 @@ function IndexPage() {
       value: "changepass",
       icon: Square3Stack3DIcon,
       desc: <SettingAccount />,
+    },
+    {
+      label: "Tra cứu khóa học",
+      value: "mycourse",
+      icon: Square3Stack3DIcon,
+      desc: <MyLearnedModule />,
     },
   ];
   return (

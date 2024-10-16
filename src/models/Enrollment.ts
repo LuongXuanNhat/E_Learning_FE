@@ -14,4 +14,7 @@ export interface Enrollment {
   Student?: User;
   Course?: Course;
   Class?: Class;
+
+  grade?: number;
+  content?: string;
 }

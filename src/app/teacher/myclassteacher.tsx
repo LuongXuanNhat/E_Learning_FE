@@ -2,12 +2,11 @@ import { Metadata } from "next";
 import { memo, useEffect, useState } from "react";
 import { Button, Typography } from "@material-tailwind/react";
 import { Class } from "@/models/Classes";
+import { useAlert } from "../components/Alert/alertbase";
 import { fetchTeacherClasses } from "@/services/service";
+import Loading from "../components/loading";
 import { format } from "date-fns";
 import { MiddlewareAuthor } from "@/middleware/Author";
-import { useAlert } from "./components/Alert/alertbase";
-import Loading from "./components/loading";
-import { Position } from "@/models/User";
 
 function TeacherClasses() {
   const [loading, setLoading] = useState(true);
@@ -50,9 +49,8 @@ function TeacherClasses() {
         setLoading(false);
       }
     };
-
     loadClasses();
-  }, []);
+  });
 
   if (loading) return <Loading />;
   if (error) return <div>{error}</div>;
@@ -160,7 +158,3 @@ function TeacherClasses() {
     </div>
   );
 }
-export default MiddlewareAuthor(TeacherClasses, [
-  Position.SUB_TEACHER,
-  Position.ADVISOR,
-]);

@@ -3,24 +3,33 @@
 import MyClass from "./myclasses";
 import { useEffect, useState } from "react";
 import Head from "./head";
-import Teacherclasses from "./teacherclasses";
 import { Position, PositionLabels, User } from "@/models/User";
 import { getCookieUser } from "@/services/authService";
+import { HomePage } from "./home";
+import Teacherclasses from "./teacherclasses";
 
 export default function Page() {
-  const [isCan, setIsCan] = useState(true);
+  const [isCan, setIsCan] = useState(0);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
     const account = getCookieUser();
     setUser(account!);
-    if (
-      account &&
-      account?.chuc_vu !== PositionLabels[Position.EDUCATION] &&
-      account?.chuc_vu !== PositionLabels[Position.SECRETARY]
+    if (!account) {
+      setIsCan(0);
+    } else if (
+      account?.chuc_vu === PositionLabels[Position.EDUCATION] ||
+      account?.chuc_vu === PositionLabels[Position.SECRETARY]
     ) {
-      setIsCan(false);
+      setIsCan(2);
+    } else if (
+      account?.chuc_vu === PositionLabels[Position.SUB_TEACHER] ||
+      account?.chuc_vu === PositionLabels[Position.ADVISOR]
+    ) {
+      setIsCan(1);
+    } else {
+      setIsCan(3);
     }
 
     setLoading(false);
@@ -32,7 +41,9 @@ export default function Page() {
   return (
     <div>
       <Head />
-      {isCan ? (
+      {isCan === 0 ? (
+        <HomePage />
+      ) : isCan === 2 ? (
         <div>
           <img
             className="object-cover object-center w-full h-[760px]"
@@ -40,8 +51,7 @@ export default function Page() {
             alt="nature image"
           />
         </div>
-      ) : user?.chuc_vu === PositionLabels[Position.SUB_TEACHER] ||
-        user?.chuc_vu === PositionLabels[Position.ADVISOR] ? (
+      ) : isCan === 1 ? (
         <Teacherclasses />
       ) : (
         <MyClass />

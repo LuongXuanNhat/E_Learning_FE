@@ -8,10 +8,11 @@ import { Lession } from "../models/Lession";
 import { Subject } from "../models/Subject";
 import { User } from "../models/User";
 import { getCookieUser } from "./authService";
-import { Grade } from "@/models/Grade";
+import { Grade, sub_grade } from "@/models/Grade";
 
 // const apiBase = "http://192.168.1.83:3000/api";
 export const apiBase = "http://localhost:3002/api";
+export const apiBackend = "http://localhost:3002";
 
 // USER
 export async function fetchUsers(): Promise<User[]> {
@@ -763,7 +764,7 @@ export async function createAttendance(data: Attendance) {
   return response.json();
 }
 
-//        GRADE STUDENT
+//        GRADE STUDENT SCORE POINT
 
 export async function getGradeOfClass(id: number) {
   const response = await fetch(apiBase + "/grades/" + id, {
@@ -778,6 +779,65 @@ export async function getGradeOfClass(id: number) {
   }
   return response.json();
 }
+export function getGradeByMultiId(class_id: number, course_id: number) {
+  const params = new URLSearchParams({
+    class_id: class_id.toString(),
+    course_id: course_id.toString(),
+    user_id: getCookieUser()!.user_id.toString(),
+  });
+
+  return fetch(apiBase + `/grades/checkPassCourse?${params.toString()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(() => 0);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Lỗi api: ", error);
+      return 0;
+    });
+}
+
+export function getGradeByStudent(
+  class_id: number,
+  course_id: number
+): Promise<sub_grade | null> {
+  const params = new URLSearchParams({
+    class_id: class_id.toString(),
+    course_id: course_id.toString(),
+    user_id: getCookieUser()!.user_id.toString(),
+  });
+
+  return fetch(apiBase + `/grades//student/getgrade?${params.toString()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.warn("Grade not found");
+          return null;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data as sub_grade;
+    })
+    .catch((error) => {
+      console.error("Lỗi api: ", error);
+      return null;
+    });
+}
+
 export async function updateStudentScoreInClass(id: number) {
   const response = await fetch(apiBase + "/grades/update/" + id, {
     method: "GET",
@@ -804,4 +864,16 @@ export async function updateGrades(grades: Grade[]) {
     throw errorData.message;
   }
   return response.json();
+}
+
+// Handle File
+export async function uploadVideo(formData: FormData) {
+  const response = await fetch(apiBase + "/upload-video", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json();
+  if (response.ok) return data.videoPath;
+  return "";
 }

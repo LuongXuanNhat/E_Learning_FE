@@ -10,6 +10,8 @@ export interface User {
   avatar_url: string | null;
   is_active: boolean;
   created_at: string | Date;
+
+  avatar?: string;
 }
 
 export enum Position {
@@ -69,7 +71,6 @@ export enum Rank {
   BinhNhi = "Binh nhất",
   BinhNhat = "Binh nhì",
 }
-
 
 export interface StudentAttendanceSummary {
   student_id: number;

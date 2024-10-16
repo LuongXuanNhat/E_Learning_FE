@@ -23,6 +23,7 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { MiddlewareAuthen } from "../../middleware/Authen";
 import { getCookieUser } from "../../services/authService";
+import AvatarSelector from "../components/avatar";
 
 function IndexPage() {
   const { addAlert } = useAlert();
@@ -148,9 +149,10 @@ function IndexPage() {
         <div className="row flex flex-wrap">
           <div className="w-full flex justify-center px-10">
             <form
-              className="mt-8 mb-2 w-full max-w-screen-lg sm:w-[1200px]"
+              className="mt-4 mb-2 w-full max-w-screen-lg sm:w-[1200px]"
               onSubmit={handleSubmit}
             >
+              <AvatarSelector />
               <div className="mb-1 flex flex-col gap-6">
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
@@ -178,7 +180,7 @@ function IndexPage() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <div className="mx-4 w-full">
                     <Input
                       label="Ngày sinh"
@@ -230,7 +232,7 @@ function IndexPage() {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
                     <Select

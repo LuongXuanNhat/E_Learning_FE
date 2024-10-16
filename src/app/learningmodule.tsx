@@ -1,19 +1,16 @@
-import { Metadata } from "next";
 import { memo, useEffect, useState } from "react";
-import { Button, Typography } from "@material-tailwind/react";
-import { Class } from "@/models/Classes";
-import { fetchTeacherClasses } from "@/services/service";
-import { format } from "date-fns";
-import { MiddlewareAuthor } from "@/middleware/Author";
+import { Enrollment } from "../models/Enrollment";
 import { useAlert } from "./components/Alert/alertbase";
+import { fetchMyClasses } from "../services/service";
 import Loading from "./components/loading";
-import { Position } from "@/models/User";
+import { Button, Typography } from "@material-tailwind/react";
+import { format } from "date-fns";
 
-function TeacherClasses() {
+export function MyLearningClass() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [classesCurent, setClassesCurent] = useState<Class[]>([]);
+  const [classes, setClasses] = useState<Enrollment[]>([]);
+  const [classesCurent, setClassesCurent] = useState<Enrollment[]>([]);
   const { addAlert } = useAlert();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,7 +25,7 @@ function TeacherClasses() {
 
     const filteredClasses = classesCurent.filter((clas) => {
       const userId = clas.class_id.toString().toLowerCase();
-      const name = clas.name.toLowerCase();
+      const name = clas.Class?.name.toLowerCase();
 
       return searchWords.every(
         (word) => userId.includes(word) || name?.includes(word)
@@ -41,7 +38,7 @@ function TeacherClasses() {
   useEffect(() => {
     const loadClasses = async () => {
       try {
-        const data = await fetchTeacherClasses();
+        const data = await fetchMyClasses();
         setClasses(data);
         setClassesCurent(data);
         setLoading(false);
@@ -66,7 +63,7 @@ function TeacherClasses() {
           color="blue-gray"
           className="py-5 pl-5"
         >
-          Danh sách lớp học giảng dạy
+          Danh sách lớp học
         </Typography>
         <div className="flex justify-center">
           <div className="flex justify-center">
@@ -117,10 +114,30 @@ function TeacherClasses() {
         {classes.map((classes) => (
           <a
             key={classes.class_id}
-            href={`/lop-hoc/${classes.class_id}`}
-            className={`  bg-white 
-                
-             w-1/4 px-4 py-4 mx-4 my-4 h-96 rounded-lg text-center `}
+            href={(() => {
+              if (!classes.course_id) {
+                return `/lop-hoc/${
+                  classes.class_id ?? classes.Class?.class_id
+                }`;
+              }
+
+              const startDate = new Date(classes.Class!.Course!.start_date);
+              if (startDate <= new Date()) {
+                console.log(2);
+                return `/lop-hoc/${
+                  classes.class_id ?? classes.Class?.class_id
+                }`;
+              }
+
+              return "#";
+            })()}
+            className={` ${
+              !classes.course_id ||
+              (classes.Class!.Course &&
+                new Date(classes.Class!.Course!.start_date) <= new Date())
+                ? "bg-white "
+                : "bg-[#0000001a] "
+            } w-1/4 px-4 py-4 mx-4 my-4 h-96 rounded-lg text-center `}
             style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
           >
             <div className="w-full">
@@ -132,19 +149,19 @@ function TeacherClasses() {
                 {classes.course_id ? "Lớp môn học" : "Lớp chính"}
               </div>
             </div>
-            <div className="text-xl font-bold">{classes?.name}</div>
-            {classes!.course_id && (
-              <p className="py-4">Lịch học: {classes?.schedule}</p>
+            <div className="text-xl font-bold">{classes.Class?.name}</div>
+            {classes.Class?.course_id && (
+              <p className="py-4">Lịch học: {classes.Class?.schedule}</p>
             )}
             {classes.course_id && (
               <p>
                 {format(
-                  new Date(classes!.Course!.start_date.toString()),
+                  new Date(classes.Class!.Course!.start_date.toString()),
                   "dd-MM-yyyy"
                 )}
                 {"  "}-{"  "}
                 {format(
-                  new Date(classes!.Course!.end_date.toString()),
+                  new Date(classes.Class!.Course!.end_date.toString()),
                   "dd-MM-yyyy"
                 )}
               </p>
@@ -160,7 +177,3 @@ function TeacherClasses() {
     </div>
   );
 }
-export default MiddlewareAuthor(TeacherClasses, [
-  Position.SUB_TEACHER,
-  Position.ADVISOR,
-]);

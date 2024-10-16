@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./style.module.css";
 
-const YouTubePlayer = ({ link }: { link: string }) => {
+const VideoPlayer = ({ link }: { link: string }) => {
   const getYouTubeId = (url: any) => {
     const regExp =
       /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -12,7 +12,14 @@ const YouTubePlayer = ({ link }: { link: string }) => {
   const videoId = getYouTubeId(link);
 
   if (!videoId) {
-    return <div>Invalid YouTube URL</div>;
+    return (
+      <div className={styles.videoContainer}>
+        <video className={styles.videoPlayer} controls>
+          <source src={link} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    );
   }
 
   return (
@@ -28,4 +35,4 @@ const YouTubePlayer = ({ link }: { link: string }) => {
     </div>
   );
 };
-export default YouTubePlayer;
+export default VideoPlayer;

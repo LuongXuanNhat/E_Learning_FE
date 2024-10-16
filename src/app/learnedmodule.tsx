@@ -1,20 +1,18 @@
-import { Metadata } from "next";
 import { memo, useEffect, useState } from "react";
-import { Button, Typography } from "@material-tailwind/react";
-import { Class } from "@/models/Classes";
-import { fetchTeacherClasses } from "@/services/service";
-import { format } from "date-fns";
-import { MiddlewareAuthor } from "@/middleware/Author";
+import { Enrollment } from "../models/Enrollment";
 import { useAlert } from "./components/Alert/alertbase";
+import { fetchMyClasses, getGradeByMultiId } from "../services/service";
 import Loading from "./components/loading";
-import { Position } from "@/models/User";
+import { Button, Card, Typography } from "@material-tailwind/react";
+import { format } from "date-fns";
 
-function TeacherClasses() {
+export function MyLearnedModule() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [classesCurent, setClassesCurent] = useState<Class[]>([]);
-  const { addAlert } = useAlert();
+  const [classes, setClasses] = useState<Enrollment[]>([]);
+  const [classesCurent, setClassesCurent] = useState<Enrollment[]>([]);
+  const [passStatus, setPassStatus] = useState<any>();
+  const [grade, setGrade] = useState(0);
 
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -28,7 +26,7 @@ function TeacherClasses() {
 
     const filteredClasses = classesCurent.filter((clas) => {
       const userId = clas.class_id.toString().toLowerCase();
-      const name = clas.name.toLowerCase();
+      const name = clas.Class!.Course!.name.toLowerCase();
 
       return searchWords.every(
         (word) => userId.includes(word) || name?.includes(word)
@@ -41,7 +39,7 @@ function TeacherClasses() {
   useEffect(() => {
     const loadClasses = async () => {
       try {
-        const data = await fetchTeacherClasses();
+        const data = await fetchMyClasses();
         setClasses(data);
         setClassesCurent(data);
         setLoading(false);
@@ -53,6 +51,37 @@ function TeacherClasses() {
 
     loadClasses();
   }, []);
+  useEffect(() => {
+    const loadPassStatus = async () => {
+      const statusPromises = classes
+        .filter((classItem) => classItem.course_id !== null)
+        .map(async (classItem) => {
+          const status = await checkPass(
+            classItem.course_id,
+            classItem.class_id
+          );
+          return [classItem.class_id, status];
+        });
+
+      const statuses = await Promise.all(statusPromises);
+      const statusObject = Object.fromEntries(statuses);
+
+      setPassStatus(statusObject);
+    };
+
+    loadPassStatus();
+  }, [classes]);
+
+  const checkPass = async (course_id: number, class_id: number) => {
+    try {
+      const result = await getGradeByMultiId(class_id, course_id);
+
+      return result;
+    } catch (error) {
+      console.error("Error checking pass status:", error);
+      return "Unknown";
+    }
+  };
 
   if (loading) return <Loading />;
   if (error) return <div>{error}</div>;
@@ -66,7 +95,7 @@ function TeacherClasses() {
           color="blue-gray"
           className="py-5 pl-5"
         >
-          Danh sách lớp học giảng dạy
+          Danh sách học phần của tôi
         </Typography>
         <div className="flex justify-center">
           <div className="flex justify-center">
@@ -114,53 +143,71 @@ function TeacherClasses() {
         </div>
       </div>
       <div className="w-full flex flex-wrap justify-center">
-        {classes.map((classes) => (
-          <a
-            key={classes.class_id}
-            href={`/lop-hoc/${classes.class_id}`}
-            className={`  bg-white 
-                
-             w-1/4 px-4 py-4 mx-4 my-4 h-96 rounded-lg text-center `}
-            style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
-          >
-            <div className="w-full">
-              <div
-                className={`${
-                  classes.course_id ? "bg-green-500" : "bg-blue-500"
-                } flex ml-auto w-fit px-2 text-white text-xs py-1 rounded-xl`}
-              >
-                {classes.course_id ? "Lớp môn học" : "Lớp chính"}
-              </div>
+        {classes
+          .filter((classItem) => classItem.course_id !== null)
+          .map((classItem) => (
+            <div
+              key={classItem.class_id}
+              className="w-full md:w-1/2 lg:w-1/3 p-4"
+            >
+              <Card className="h-full hover:shadow-lg transition-shadow duration-300 p-6">
+                <div className="flex flex-col h-full">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-bold  text-primary">
+                      {classItem.Class?.Course?.name}
+                    </h3>
+                    <div>
+                      {new Date(classItem.Class!.Course!.start_date) <=
+                        new Date() &&
+                      new Date(classItem.Class!.Course!.end_date) >=
+                        new Date() ? (
+                        <img
+                          src="images/process.png"
+                          alt=""
+                          className="w-10 h-10"
+                        />
+                      ) : passStatus[classItem.class_id] != null &&
+                        passStatus[classItem.class_id] >= 5 ? (
+                        <img src="images/pass.png" className="w-10 h-10" />
+                      ) : (
+                        <img src="images/fail.png" className="w-10 h-10" />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-gray-600 flex-grow">
+                    {classItem.Class?.schedule && (
+                      <div className="flex items-center gap-2">
+                        <span>Lịch học: {classItem.Class.schedule}</span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 justify-between">
+                      <span>
+                        {format(
+                          new Date(
+                            classItem.Class!.Course!.start_date.toString()
+                          ),
+                          "dd/MM/yyyy"
+                        )}
+                        {" - "}
+                        {format(
+                          new Date(
+                            classItem.Class!.Course!.end_date.toString()
+                          ),
+                          "dd/MM/yyyy"
+                        )}
+                      </span>
+                      <strong className="font-bold">
+                        {passStatus[classItem.class_id]}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+              </Card>
             </div>
-            <div className="text-xl font-bold">{classes?.name}</div>
-            {classes!.course_id && (
-              <p className="py-4">Lịch học: {classes?.schedule}</p>
-            )}
-            {classes.course_id && (
-              <p>
-                {format(
-                  new Date(classes!.Course!.start_date.toString()),
-                  "dd-MM-yyyy"
-                )}
-                {"  "}-{"  "}
-                {format(
-                  new Date(classes!.Course!.end_date.toString()),
-                  "dd-MM-yyyy"
-                )}
-              </p>
-            )}
-            <img
-              src="/images/class.png"
-              alt=""
-              className="w-52 object-contain mx-auto"
-            />
-          </a>
-        ))}
+          ))}
       </div>
     </div>
   );
 }
-export default MiddlewareAuthor(TeacherClasses, [
-  Position.SUB_TEACHER,
-  Position.ADVISOR,
-]);

@@ -29,9 +29,16 @@ export function saveCookieUser(user: any) {
 export function setCookie(name: string, value: any, days: number = 7) {
   Cookies.set(name, value, { expires: days });
 }
+export function setDisplayMode(mode: boolean) {
+  Cookies.set("display_mode", mode ? "1" : "0");
+}
 export function getCookie(name: string) {
   return Cookies.get(name);
 }
+export function getLocalStorage(name: string) {
+  return localStorage.getItem(name);
+}
+
 export function removeCookie(name: string) {
   Cookies.remove(name);
 }
@@ -42,6 +49,13 @@ export function getCookieUser(): User | null {
     return user ? JSON.parse(user) : null;
   }
   return null;
+}
+export function getConfigDisplay() {
+  if (typeof window !== "undefined") {
+    const r = Cookies.get("display_mode");
+    return r !== null || r === "1";
+  }
+  return true;
 }
 export function Logout() {
   if (typeof window !== "undefined") {

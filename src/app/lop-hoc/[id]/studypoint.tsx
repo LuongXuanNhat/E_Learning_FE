@@ -41,10 +41,26 @@ function StudyPoint({ id }: { id: number }) {
       )
     );
   };
-
+  const parseGradeValue = (value: string | number): number => {
+    if (typeof value === "string") {
+      // Loại bỏ khoảng trắng và thay thế dấu phẩy bằng dấu chấm (nếu có)
+      const cleanValue = value.trim().replace(",", ".");
+      // Chuyển đổi sang số và giới hạn 2 chữ số thập phân
+      const numberValue = parseFloat(cleanValue);
+      // Kiểm tra nếu là số hợp lệ
+      return !isNaN(numberValue) ? Number(numberValue.toFixed(2)) : 0;
+    }
+    return value;
+  };
   const updateGrade = async () => {
     try {
-      await updateGrades(studentgrade);
+      const updatedGrades = studentgrade.map((grade) => ({
+        ...grade,
+        process_grade: parseGradeValue(grade.process_grade),
+      }));
+
+      console.log(updatedGrades);
+      await updateGrades(updatedGrades);
       await getStudentGrade();
       addAlert(AlertType.success, "Cập nhập thành công");
     } catch (error) {
@@ -121,6 +137,11 @@ function StudyPoint({ id }: { id: number }) {
                   Điểm môn học
                 </p>
               </th>
+              <th className="p-4 border-b border-l-4 border-blue-700  bg-blue-gray-50 w-32">
+                <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                  Nhận xét HV
+                </p>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -132,7 +153,22 @@ function StudyPoint({ id }: { id: number }) {
                   </p>
                 </td>
                 <td className="p-4 border-b border-blue-gray-50">
-                  <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                  <p
+                    title={`${
+                      item.summary_score >= 8.5
+                        ? "Đạt điểm cao"
+                        : item.summary_score < 5
+                        ? "Điểm kém"
+                        : ""
+                    }`}
+                    className={`${
+                      item.summary_score >= 8.5
+                        ? "text-green-600 cursor-pointer"
+                        : item.summary_score < 5
+                        ? "text-red-600 cursor-pointer"
+                        : "text-blue-gray-900"
+                    } block font-sans text-sm antialiased font-normal leading-normal`}
+                  >
                     {item.Student!.name}
                   </p>
                 </td>
@@ -192,7 +228,7 @@ function StudyPoint({ id }: { id: number }) {
                     className="w-full font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"
                   />
                 </td>
-                <td className="p-4 border-b-2 border-l-2  border-blue-gray-50">
+                <td className="p-4 border-b-2 border-l-2  border-blue-gray-40">
                   <input
                     type="number"
                     value={item.process_grade}
@@ -232,6 +268,19 @@ function StudyPoint({ id }: { id: number }) {
                       )
                     }
                     className="w-full font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900"
+                  />
+                </td>
+                <td className="p-4 border-b-2 border-l-4 border-blue-gray-50 w-60">
+                  <textarea
+                    value={item.content}
+                    onChange={(e) =>
+                      handleInputChange(
+                        item.grade_id,
+                        "content",
+                        e.target.value
+                      )
+                    }
+                    className="w-full font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 px-2 py-1"
                   />
                 </td>
               </tr>

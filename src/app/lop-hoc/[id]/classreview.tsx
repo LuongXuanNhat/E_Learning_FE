@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
-import YouTubePlayer from "@/app/components/youtubeplayer";
+import YouTubePlayer from "@/app/components/videoplayer";
 import { MiddlewareAuthen } from "@/middleware/Authen";
 import { Feedback } from "@/models/Feedback";
 import { Lession } from "@/models/Lession";
