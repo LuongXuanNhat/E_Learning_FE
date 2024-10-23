@@ -1,39 +1,30 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
-import EditorHTML from "@/app/components/editor";
 import Loading from "@/app/components/loading";
-import { Blog } from "@/models/Blog";
 import { Document } from "@/models/Document";
 import { Position, PositionLabels, User } from "@/models/User";
-import { Attendance } from "@/models/Attendance";
 import IsRole, { getCookieUser } from "@/services/authService";
 import {
   apiBackend,
-  createAttendance,
   createDocument,
-  deleteBlog,
   deleteDocument,
   fetchDocuments,
-  getBlogOfClass,
-  getCheckRollCall,
   getDocumentById,
-  getTookAttendance,
-  saveBlog,
   updateDocument,
   uploadDocument,
 } from "@/services/service";
 import { Button, Input, Textarea, Typography } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
-import { MiddlewareAuthor } from "@/middleware/Author";
 import { MiddlewareAuthen } from "@/middleware/Authen";
+import Pagination from "../components/paging";
 
 function DocumentBank() {
   const [isShow, setIsShow] = useState(true);
   const [isRollCall, setIsRollCall] = useState(false);
-  const [blogs, setCurrentBlog] = useState<Blog[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [currentDocuments, setCurrentDocuments] = useState<Document[]>([]);
   const { addAlert } = useAlert();
   const [canRole, setRole] = useState(false);
   const [user, setUser] = useState<User>();
@@ -42,6 +33,7 @@ function DocumentBank() {
   const [isTookAttendance, setIsTookAttendance] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [titleEditor, setTitleEditor] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [document, setDocument] = useState<Document>({
     author_id: 0,
     created_at: new Date(),
@@ -51,12 +43,34 @@ function DocumentBank() {
     title: "",
     is_active: false,
   });
+  const handleSearch = (searchValue: string) => {
+    if (searchValue.trim() === "") {
+      setDocuments(currentDocuments);
+      return;
+    }
 
+    const searchWords = searchValue
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.trim())
+      .filter((word) => word.length > 0);
+
+    const filteredDocuments = currentDocuments.filter((doc) => {
+      const title = doc.title.toLowerCase();
+      const author = doc.Author!.name.toLowerCase();
+
+      return searchWords.every(
+        (word) => title.includes(word) || author.includes(word)
+      );
+    });
+
+    setDocuments(filteredDocuments);
+  };
   const editdocument = async (id: number) => {
     setTitleEditor(true);
     const documentData = await getDocumentById(id);
     setDocument(documentData);
-    showEditor();
+    setIsShow(false);
   };
   useEffect(() => {
     setRole(IsRole([Position.ADVISOR, Position.SUB_TEACHER]));
@@ -74,6 +88,7 @@ function DocumentBank() {
   const fetchDocumentData = async () => {
     const data = await fetchDocuments();
     setDocuments(data);
+    setCurrentDocuments(data);
   };
   const handlePost = async () => {
     try {
@@ -125,12 +140,14 @@ function DocumentBank() {
         "application/pdf",
         "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       ];
 
       if (!validTypes.includes(file.type)) {
         addAlert(
           AlertType.info,
-          "Vui lòng tải lên tệp định dạng .pdf, .doc, hoặc .docx"
+          "Vui lòng tải lên tệp định dạng .pdf, .doc, .docx, .pptx,.xlsx"
         );
         return;
       }
@@ -259,7 +276,7 @@ function DocumentBank() {
                         type="file"
                         size="lg"
                         className=" "
-                        accept=".doc,.docx,.pdf"
+                        accept=".doc,.docx,.pdf,.pptx,.xlsx"
                         onChange={handleInputChangeDocument}
                       />
                     </div>
@@ -292,7 +309,51 @@ function DocumentBank() {
       </div>
       <div>
         <div className="mx-auto px-4 py-8">
-          <div className="space-y-6">
+          <div className="flex justify-center w-1/2 float-end">
+            <div className="relative h-10 w-full min-w-[200px] mr-2">
+              <div className="absolute grid w-5 h-5 top-2/4 right-3 -translate-y-2/4 place-items-center text-blue-gray-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  handleSearch(e.target.value);
+                }}
+                className="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 !pr-9 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                placeholder=" "
+              />
+              <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                Tìm kiếm
+              </label>
+            </div>
+            <Button
+              ripple={true}
+              color="blue"
+              className="w-48"
+              onClick={() => {
+                setSearchTerm("");
+                setDocuments(documents);
+              }}
+            >
+              Xóa tìm kiếm
+            </Button>
+          </div>
+          <div className="space-y-6 mt-14">
             {documents.map((document) => (
               <div key={document.document_id} className="">
                 <div className="flex flex-col  lg:flex-row">
@@ -338,15 +399,23 @@ function DocumentBank() {
                         download={document.link}
                         className="text-blue-600 font-bold"
                       >
-                        <Typography>Tải xuống</Typography>
+                        <Typography className="font-bold">Tải xuống</Typography>
                       </a>
                     </div>
-                    <Typography>{document.description}</Typography>
+                    <hr className="my-3" />
+                    <Typography className="line-clamp-6">
+                      {document.description}
+                    </Typography>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+          <Pagination
+            data={currentDocuments}
+            itemsPerPageOptions={[1, 2, 5, 10, 20, 50]}
+            onPageChange={setDocuments}
+          />
         </div>
       </div>
     </div>

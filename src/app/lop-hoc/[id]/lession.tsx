@@ -99,7 +99,7 @@ function LessionVideo({ id }: { id: number }) {
 
     if (file) {
       if (file.type !== "video/mp4") {
-        alert("Vui lòng tải lên tệp định dạng .mp4");
+        addAlert(AlertType.info, "Vui lòng tải lên tệp định dạng .mp4");
         return;
       }
 

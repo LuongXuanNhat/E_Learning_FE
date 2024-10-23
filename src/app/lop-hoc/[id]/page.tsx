@@ -44,6 +44,7 @@ import IsRole from "@/services/authService";
 import LessionVideo from "./lession";
 import AttendanceClass from "./attendance";
 import Loading from "@/app/components/loading";
+import Documentbank from "./documentbank";
 
 function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
@@ -161,6 +162,13 @@ function IndexPage({ params }: { params: { id: number } }) {
       desc: <ClassReview id={params.id} />,
       allow: [Position.ADVISOR, Position.SECRETARY, Position.STUDENT],
     },
+    // {
+    //   label: "Kho tài liệu",
+    //   value: "document",
+    //   icon: Square3Stack3DIcon,
+    //   desc: <Documentbank />,
+    //   allow: [],
+    // },
   ];
 
   const fetchData = async () => {

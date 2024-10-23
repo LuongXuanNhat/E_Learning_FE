@@ -18,6 +18,7 @@
     "@lexical/selection": "^0.17.0",
     "@lexical/utils": "^0.17.0",
     "@material-tailwind/react": "^2.1.9",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@tiptap/core": "^2.5.8",
     "@tiptap/extension-blockquote": "^2.5.8",
     "@tiptap/extension-bold": "^2.5.8",

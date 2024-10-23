@@ -105,6 +105,16 @@ export function StickyNavbar() {
           Giới thiệu
         </a>
       </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+      >
+        <a href="/tai-lieu" className="flex items-center">
+          Kho tài liệu
+        </a>
+      </Typography>
       {isClient && IsRole([Position.EDUCATION]) ? <NavListMenu /> : null}
       {isClient && IsRole([Position.SECRETARY, Position.ADVISOR]) ? (
         <Typography

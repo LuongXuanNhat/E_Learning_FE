@@ -9,6 +9,8 @@ import { Subject } from "../models/Subject";
 import { User } from "../models/User";
 import { getCookieUser } from "./authService";
 import { Grade, sub_grade } from "@/models/Grade";
+import { Document } from "@/models/Document";
+import { Blog } from "@/models/Blog";
 
 // const apiBase = "http://192.168.1.83:3000/api";
 export const apiBase = "http://localhost:3002/api";
@@ -460,6 +462,28 @@ export async function saveBlog(content: string, class_id: number) {
   }
   return response.json();
 }
+export async function updateBlog(blog: Blog) {
+  const response = await fetch(apiBase + "/blogs", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      blog_id: blog.blog_id,
+      class_id: blog.class_id,
+      teacher_id: blog.teacher_id,
+      title: "",
+      content: blog.content,
+      resource_url: "",
+      documents: blog.documents,
+    }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
 export async function getBlogOfClass(class_id: number) {
   const response = await fetch(apiBase + "/blogs/" + class_id, {
     method: "GET",
@@ -876,4 +900,85 @@ export async function uploadVideo(formData: FormData) {
   const data = await response.json();
   if (response.ok) return data.videoPath;
   return "";
+}
+
+// Document
+export async function uploadDocument(formData: FormData) {
+  const response = await fetch(apiBase + "/upload-document", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json();
+  if (response.ok) return data.documentPath;
+  return "";
+}
+export async function createDocument(data: Document) {
+  data.created_at = new Date();
+  data.author_id = getCookieUser()?.user_id ?? 0;
+  const response = await fetch(apiBase + "/Documents", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateDocument(data: Document) {
+  const response = await fetch(apiBase + "/Documents/" + data.document_id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function deleteDocument(id: number) {
+  const response = await fetch(apiBase + "/Documents/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function getDocumentById(id: number) {
+  const response = await fetch(apiBase + "/Documents/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function fetchDocuments(): Promise<Document[]> {
+  const response = await fetch(apiBase + "/DocumentList", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
 }

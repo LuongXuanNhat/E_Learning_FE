@@ -10,4 +10,5 @@ export interface Blog {
   created_at: Date | string | null;
 
   Teacher?: User;
+  documents?: string;
 }
