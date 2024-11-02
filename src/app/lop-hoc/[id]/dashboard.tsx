@@ -8,14 +8,17 @@ import { Position, PositionLabels, User } from "@/models/User";
 import { Attendance } from "@/models/Attendance";
 import IsRole, { getCookieUser } from "@/services/authService";
 import {
+  apiBackend,
   createAttendance,
   deleteBlog,
   getBlogOfClass,
   getCheckRollCall,
   getTookAttendance,
   saveBlog,
+  updateBlog,
+  uploadDocument,
 } from "@/services/service";
-import { Button } from "@material-tailwind/react";
+import { Button, Input, Typography } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { MiddlewareAuthor } from "@/middleware/Author";
@@ -26,6 +29,7 @@ function DashboardclassName({ id }: { id: number }) {
   const [isRollCall, setIsRollCall] = useState(false);
   const [blogs, setCurrentBlog] = useState<Blog[]>([]);
   const [editorContent, setEditorContent] = useState("");
+  const [linkDoc, setLinkDocument] = useState("");
   const { addAlert } = useAlert();
   const [canRole, setRole] = useState(false);
   const [user, setUser] = useState<User>();
@@ -38,6 +42,48 @@ function DashboardclassName({ id }: { id: number }) {
       setCurrentBlog(data);
     } catch (error) {
       addAlert(AlertType.error, "Có lỗi lấy bài đăng:" + error);
+    }
+  };
+
+  const handleInputChangeDocument = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    blog: Blog
+  ) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const validTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ];
+
+      if (!validTypes.includes(file.type)) {
+        addAlert(
+          AlertType.info,
+          "Vui lòng tải lên tệp định dạng .pdf, .doc, .docx, .pptx,.xlsx"
+        );
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("document", file);
+
+      try {
+        const response = await uploadDocument(formData);
+        if (response) {
+          blog.documents = "[" + file.name + "]" + apiBackend + response + ";";
+          await updateBlog(blog);
+          await fetchBlogData();
+          addAlert(AlertType.success, "Đã tải lên tài liệu.");
+        } else {
+          addAlert(AlertType.info, "Lỗi khi tải tài liệu.");
+        }
+      } catch (error) {
+        addAlert(AlertType.error, "Lỗi khi xử lý tài liệu: " + error);
+      }
     }
   };
 
@@ -199,9 +245,61 @@ function DashboardclassName({ id }: { id: number }) {
                   <div className="w-full bg-white shadow-md rounded-lg p-6">
                     <h3 className="text-xl font-semibold mb-2">{blog.title}</h3>
                     <div
-                      className="text-gray-800 mb-4"
+                      className="text-gray-800 mb-10"
                       dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
+                    <div className="mb-5">
+                      <span>Tài liệu tham khảo</span>
+                      <ul>
+                        {blog.documents && blog.documents.trim().length > 0 ? (
+                          blog.documents
+                            .split(";")
+                            .filter((document) => document.trim().length > 0) // Filter out empty strings
+                            .map((document, index) => {
+                              const match = document.match(
+                                /\[([^\]]+)\](http[^\s]+)/
+                              );
+                              if (match) {
+                                const title = match[1];
+                                const url = match[2];
+                                return (
+                                  <li key={index}>
+                                    <a
+                                      href={url}
+                                      download={url}
+                                      className="text-blue-600 font-bold"
+                                    >
+                                      <Typography className="font-bold">
+                                        {title}
+                                      </Typography>
+                                    </a>
+                                  </li>
+                                );
+                              }
+                              return null;
+                            })
+                        ) : (
+                          <li></li>
+                        )}
+                      </ul>
+                    </div>
+                    <div className="flex justify-between">
+                      <div className="flex justify-end items-center">
+                        <span className=" w-52">Đính kèm tài liệu: </span>
+                        {/* <Button className="mr-2 w-[200px]">
+                          Từ kho tài liệu
+                        </Button> */}
+                        <Input
+                          label="Tải lên"
+                          crossOrigin=""
+                          size="lg"
+                          className=" "
+                          accept=".doc,.docx,.pdf,.pptx,.xlsx"
+                          type="file"
+                          onChange={(e) => handleInputChangeDocument(e, blog)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

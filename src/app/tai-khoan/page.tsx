@@ -12,10 +12,32 @@ import {
 import { MiddlewareAuthen } from "../../middleware/Authen";
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import Profile from "./profile";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SettingAccount from "./SettingAccount";
+import { MyLearnedModule } from "../learnedmodule";
+import { Position, User } from "@/models/User";
+import { getCookieUser } from "@/services/authService";
 
 function IndexPage() {
+  const [userCurrent, setUserCurrent] = useState<User>({
+    user_id: 0,
+    username: "",
+    name: "",
+    cap_bac: "",
+    chuc_vu: "",
+    email: "",
+    password: "",
+    role: undefined,
+    avatar_url: null,
+    is_active: true,
+    created_at: "",
+    faculty_id: 0,
+  });
+  useEffect(() => {
+    const userCurrentA = getCookieUser();
+    setUserCurrent(userCurrentA!);
+  }, []);
+
   const data = [
     {
       label: "Thông tin cá nhân",
@@ -29,6 +51,16 @@ function IndexPage() {
       icon: Square3Stack3DIcon,
       desc: <SettingAccount />,
     },
+    ...(userCurrent.role === Position.STUDENT
+      ? [
+          {
+            label: "Tra cứu khóa học",
+            value: "mycourse",
+            icon: Square3Stack3DIcon,
+            desc: <MyLearnedModule />,
+          },
+        ]
+      : []),
   ];
   return (
     <div className="py-3">

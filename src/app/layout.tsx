@@ -3,7 +3,6 @@ import "./globals.css";
 import { StickyNavbar } from "./components/navbar";
 import Footer from "./components/footer";
 import { AlertProvider } from "./components/Alert/alertbase";
-import { ShowAlert } from "./components/Alert/alert";
 import { AlertCustom } from "./components/Alert/arlertcustom";
 
 export default function RootLayout({

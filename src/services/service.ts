@@ -6,12 +6,17 @@ import { Enrollment } from "../models/Enrollment";
 import { Feedback } from "../models/Feedback";
 import { Lession } from "../models/Lession";
 import { Subject } from "../models/Subject";
-import { User } from "../models/User";
+import { Position, User } from "../models/User";
 import { getCookieUser } from "./authService";
-import { Grade } from "@/models/Grade";
+import { Grade, sub_grade } from "@/models/Grade";
+import { Document } from "@/models/Document";
+import { Blog } from "@/models/Blog";
+import { Faculty } from "@/models/Faculty";
+import { Schedule } from "@/models/Schedule";
 
 // const apiBase = "http://192.168.1.83:3000/api";
 export const apiBase = "http://localhost:3002/api";
+export const apiBackend = "http://localhost:3002";
 
 // USER
 export async function fetchUsers(): Promise<User[]> {
@@ -27,6 +32,28 @@ export async function fetchUsers(): Promise<User[]> {
   }
   return response.json();
 }
+
+export async function fetchTrainingDepartmentPersonal(): Promise<User[]> {
+  const response = await fetchUsers();
+  const users: User[] = await response;
+  return users.filter((user) => user.role === Position.EDUCATION);
+}
+
+export async function fetchSecretaryDepartmentPersonal(): Promise<User[]> {
+  const response = await fetchUsers();
+  const users: User[] = await response;
+  return users.filter((user) => user.role === Position.SECRETARY);
+}
+
+export async function fetchTeacherDepartmentPersonal(): Promise<User[]> {
+  const response = await fetchUsers();
+  const users: User[] = await response;
+  return users.filter(
+    (user) =>
+      user.role === Position.SUB_TEACHER || user.role === Position.ADVISOR
+  );
+}
+
 export async function fetchStudents(): Promise<User[]> {
   const response = await fetch(apiBase + "/users/student", {
     method: "GET",
@@ -168,6 +195,19 @@ export async function getCourseById(id: number) {
 }
 
 // CLASSES
+export async function fetchClasses(): Promise<Class[]> {
+  const response = await fetch(apiBase + "/classes", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
 export async function fetchManagerClass(): Promise<Class[]> {
   const response = await fetch(apiBase + "/classes/t/1", {
     method: "GET",
@@ -438,6 +478,28 @@ export async function saveBlog(content: string, class_id: number) {
       content: content,
       resource_url: "",
       created_at: new Date(),
+    }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateBlog(blog: Blog) {
+  const response = await fetch(apiBase + "/blogs", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      blog_id: blog.blog_id,
+      class_id: blog.class_id,
+      teacher_id: blog.teacher_id,
+      title: "",
+      content: blog.content,
+      resource_url: "",
+      documents: blog.documents,
     }),
   });
   if (!response.ok) {
@@ -750,7 +812,7 @@ export async function createAttendance(data: Attendance) {
   return response.json();
 }
 
-//        GRADE STUDENT
+//        GRADE STUDENT SCORE POINT
 
 export async function getGradeOfClass(id: number) {
   const response = await fetch(apiBase + "/grades/" + id, {
@@ -765,6 +827,65 @@ export async function getGradeOfClass(id: number) {
   }
   return response.json();
 }
+export function getGradeByMultiId(class_id: number, course_id: number) {
+  const params = new URLSearchParams({
+    class_id: class_id.toString(),
+    course_id: course_id.toString(),
+    user_id: getCookieUser()!.user_id.toString(),
+  });
+
+  return fetch(apiBase + `/grades/checkPassCourse?${params.toString()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(() => 0);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Lỗi api: ", error);
+      return 0;
+    });
+}
+
+export function getGradeByStudent(
+  class_id: number,
+  course_id: number
+): Promise<sub_grade | null> {
+  const params = new URLSearchParams({
+    class_id: class_id.toString(),
+    course_id: course_id.toString(),
+    user_id: getCookieUser()!.user_id.toString(),
+  });
+
+  return fetch(apiBase + `/grades//student/getgrade?${params.toString()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.warn("Grade not found");
+          return null;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data as sub_grade;
+    })
+    .catch((error) => {
+      console.error("Lỗi api: ", error);
+      return null;
+    });
+}
+
 export async function updateStudentScoreInClass(id: number) {
   const response = await fetch(apiBase + "/grades/update/" + id, {
     method: "GET",
@@ -785,6 +906,241 @@ export async function updateGrades(grades: Grade[]) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(grades),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+// Handle File
+export async function uploadVideo(formData: FormData) {
+  const response = await fetch(apiBase + "/upload-video", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json();
+  if (response.ok) return data.videoPath;
+  return "";
+}
+
+// Document
+export async function uploadDocument(formData: FormData) {
+  const response = await fetch(apiBase + "/upload-document", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json();
+  if (response.ok) return data.documentPath;
+  return "";
+}
+export async function createDocument(data: Document) {
+  data.created_at = new Date();
+  data.author_id = getCookieUser()?.user_id ?? 0;
+  const response = await fetch(apiBase + "/Documents", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateDocument(data: Document) {
+  const response = await fetch(apiBase + "/Documents/" + data.document_id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function deleteDocument(id: number) {
+  const response = await fetch(apiBase + "/Documents/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function getDocumentById(id: number) {
+  const response = await fetch(apiBase + "/Documents/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function fetchDocuments(): Promise<Document[]> {
+  const response = await fetch(apiBase + "/DocumentList", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+//      Faculty
+export async function fetchFaculties(): Promise<Faculty[]> {
+  const response = await fetch(apiBase + "/faculties", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+export async function createFaculty(data: Faculty) {
+  data.created_at = new Date();
+  const response = await fetch(apiBase + "/faculties", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateFaculty(data: Faculty) {
+  const response = await fetch(apiBase + "/faculties/" + data.faculty_id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function deleteFaculty(id: number) {
+  const response = await fetch(apiBase + "/faculties/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function getFacultyById(id: number) {
+  const response = await fetch(apiBase + "/faculties/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+//      Schedule
+export async function fetchSchedules(): Promise<Schedule[]> {
+  const response = await fetch(apiBase + "/schedules", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+
+export async function createSchedule(data: Schedule) {
+  data.created_at = new Date();
+  const response = await fetch(apiBase + "/schedules", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function updateSchedule(data: Schedule) {
+  const response = await fetch(apiBase + "/schedules/" + data.schedule_id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
+export async function deleteSchedule(id: number) {
+  const response = await fetch(apiBase + "/schedules/" + id, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.ok;
+}
+export async function getScheduleById(id: number) {
+  const response = await fetch(apiBase + "/schedules/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) {
     const errorData = await response.json();

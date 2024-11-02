@@ -1,15 +1,13 @@
 import { Metadata } from "next";
 import { memo, useEffect, useState } from "react";
-import { Enrollment } from "../models/Enrollment";
-import { useAlert } from "./components/Alert/alertbase";
-import { fetchMyClasses, fetchTeacherClasses } from "../services/service";
-import Loading from "./components/loading";
-import Pagination from "./components/paging";
 import { Button, Typography } from "@material-tailwind/react";
-import { MiddlewareAuthor } from "../middleware/Author";
-import { Position } from "../models/User";
+import { Class } from "@/models/Classes";
+import { fetchTeacherClasses } from "@/services/service";
 import { format } from "date-fns";
-import { Class } from "../models/Classes";
+import { MiddlewareAuthor } from "@/middleware/Author";
+import { useAlert } from "./components/Alert/alertbase";
+import Loading from "./components/loading";
+import { Position } from "@/models/User";
 
 function TeacherClasses() {
   const [loading, setLoading] = useState(true);
@@ -57,7 +55,12 @@ function TeacherClasses() {
   }, []);
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
 
   return (
     <div className="relative flex flex-col pb-20 w-full h-full overflow-scroll text-gray-700 bg-white shadow-md ">
@@ -163,6 +166,6 @@ function TeacherClasses() {
   );
 }
 export default MiddlewareAuthor(TeacherClasses, [
-  Position.ADVISOR,
   Position.SUB_TEACHER,
+  Position.ADVISOR,
 ]);

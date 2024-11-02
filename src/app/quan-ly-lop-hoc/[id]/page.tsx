@@ -3,10 +3,12 @@
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import { Class } from "@/models/Classes";
 import { Course } from "@/models/Course";
+import { Faculty } from "@/models/Faculty";
 import { User } from "@/models/User";
 import {
   createClass,
   fetchCourses,
+  fetchFaculties,
   fetchUsers,
   getClassById,
   updateClass,
@@ -36,10 +38,12 @@ export default function IndexPage({ params }: { params: { id: number } }) {
     course_id: null,
     schedule: "",
     created_at: "",
+    faculty_id: 0,
   });
   const [courses, setCourses] = React.useState<Course[]>([]);
   const [users, setUsers] = React.useState<User[]>([]);
   const [state, setState] = React.useState<boolean>();
+  const [dataFaculties, setDataFaculty] = useState<Faculty[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +62,17 @@ export default function IndexPage({ params }: { params: { id: number } }) {
       }, 10);
     };
 
+    const fetchFaculty = async () => {
+      try {
+        const data = await fetchFaculties();
+        setDataFaculty(data);
+      } catch (error) {
+        addAlert(AlertType.info, "Lỗi lấy danh sách môn học: " + error);
+      }
+    };
+
     fetchData();
+    fetchFaculty();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,6 +231,28 @@ export default function IndexPage({ params }: { params: { id: number } }) {
                 )}
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
+                    <Select
+                      name="subject_id"
+                      label="Chọn khoa/viện (*)"
+                      key={classes.faculty_id}
+                      value={classes.faculty_id.toString()}
+                      onChange={(value: any) =>
+                        handleSelectChange("faculty_id", value)
+                      }
+                    >
+                      {dataFaculties.map((faculty) => (
+                        <Option
+                          key={faculty.faculty_id}
+                          value={faculty.faculty_id.toString()}
+                        >
+                          {faculty.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="mx-4 w-full">
                     <Input
                       name="name"
                       label="Tên lớp học (*)"
@@ -257,8 +293,8 @@ export default function IndexPage({ params }: { params: { id: number } }) {
                   <div className="mx-4 w-full">
                     <Select
                       name="course_id"
-                      label="Chọn khóa học (*)"
-                      placeholder="Chọn khóa học"
+                      label="Chọn khoa/viện (*)"
+                      placeholder="Chọn khoa/viện"
                       key={classes.course_id}
                       value={classes.course_id?.toString()}
                       onChange={(value: any) =>

@@ -91,7 +91,7 @@ function IndexPage({ params }: { params: { id: number } }) {
     }
 
     if (course.name === "") {
-      addAlert(AlertType.warning, "Hãy chọn khóa học/môn học");
+      addAlert(AlertType.warning, "Hãy Chọn môn học/môn học");
       return true;
     }
     const startDate = new Date(course.start_date);
@@ -172,7 +172,12 @@ function IndexPage({ params }: { params: { id: number } }) {
   }, []);
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
 
   return (
     <div className="py-3">
@@ -204,7 +209,7 @@ function IndexPage({ params }: { params: { id: number } }) {
                   <div className="mx-4 w-full">
                     <Select
                       name="subject_id"
-                      label="Chọn khóa học (*)"
+                      label="Chọn môn học (*)"
                       key={course.subject_id}
                       value={course.subject_id.toString()}
                       onChange={(value: any) =>

@@ -13,7 +13,12 @@ export interface Grade {
   final_score: number;
   summary_score: number;
   created_at: Date;
-
+  content: string;
   // Associations
   Student?: User;
+}
+
+export interface sub_grade {
+  grade: number;
+  content: string;
 }

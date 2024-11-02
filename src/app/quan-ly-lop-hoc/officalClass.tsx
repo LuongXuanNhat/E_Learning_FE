@@ -77,7 +77,12 @@ function ClassesManager() {
     }
   };
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
 
   return (
     <div className="relative flex flex-col pb-20 w-full h-full overflow-scroll text-gray-700 bg-white shadow-md ">
@@ -150,22 +155,17 @@ function ClassesManager() {
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                Khoa/viện
+              </p>
+            </th>
+            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                 Mô tả
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Học phần
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                 CVHT/GVBM
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Thời khóa biểu
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
@@ -195,22 +195,17 @@ function ClassesManager() {
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                  {classes.Faculty?.name}
+                </p>
+              </td>
+              <td className="p-4 border-b border-blue-gray-50">
+                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                   {classes.description}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {classes.Course?.name}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                   {classes.Advisor?.name}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {classes.schedule}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">

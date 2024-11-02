@@ -28,6 +28,7 @@ export default function ClassMember({ id }: { id: number }) {
     course_id: null,
     schedule: "",
     created_at: "",
+    faculty_id: 0,
     Course: {
       start_date: new Date(),
       end_date: new Date(),
@@ -52,6 +53,7 @@ export default function ClassMember({ id }: { id: number }) {
       avatar_url: null,
       is_active: true,
       created_at: "",
+      faculty_id: 0,
     },
   });
 
@@ -62,7 +64,6 @@ export default function ClassMember({ id }: { id: number }) {
   const fetchData = async () => {
     const dataStudents = await fetchStudentClass(id);
     setStudents(dataStudents);
-    console.log(dataStudents);    
   };
   const [students, setStudents] = useState<Enrollment[]>([]);
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function ClassMember({ id }: { id: number }) {
           </div>
           <hr />
         </div>
-        <div> 
+        <div>
           <div className="flex justify-between mt-4">
             <Typography variant="h5">Học viên</Typography>
             <div className="flex items-center">

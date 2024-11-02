@@ -69,7 +69,7 @@ function IndexPage({ params }: { params: { id: number } }) {
     }
 
     if (subject.name === "") {
-      addAlert(AlertType.warning, "Hãy chọn khóa học/môn học");
+      addAlert(AlertType.warning, "Hãy Chọn môn học/môn học");
       return true;
     }
 
@@ -117,7 +117,12 @@ function IndexPage({ params }: { params: { id: number } }) {
   };
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
   return (
     <div className="py-3">
       <Card color="transparent" shadow={false}>

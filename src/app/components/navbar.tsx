@@ -26,7 +26,12 @@ import {
 } from "@heroicons/react/16/solid";
 import { Position, User } from "../../models/User";
 import { set } from "date-fns";
-import IsRole, { getCookieUser, Logout } from "../../services/authService";
+import IsRole, {
+  getCookie,
+  getCookieUser,
+  getLocalStorage,
+  Logout,
+} from "../../services/authService";
 import { AlertType, useAlert } from "./Alert/alertbase";
 import { useRouter } from "next/navigation";
 
@@ -51,12 +56,12 @@ export function StickyNavbar() {
   const router = useRouter();
 
   const logout = () => {
-    if (Logout()) {
-      router.push("/");
-      setUser(undefined);
-      setIsLoggedIn(false);
-      addAlert(AlertType.success, "Đã đăng xuất");
-    }
+    Logout();
+    setUser(undefined);
+    router.push("/");
+    setIsLoggedIn(false);
+
+    addAlert(AlertType.success, "Đã đăng xuất");
   };
   const handleOpen = () => setOpen((cur) => !cur);
   React.useEffect(() => {
@@ -100,13 +105,59 @@ export function StickyNavbar() {
           Giới thiệu
         </a>
       </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+      >
+        <a href="/tai-lieu" className="flex items-center">
+          Kho tài liệu
+        </a>
+      </Typography>
       {isClient && IsRole([Position.EDUCATION]) ? <NavListMenu /> : null}
+      {isClient && IsRole([Position.SECRETARY, Position.ADVISOR]) ? (
+        <Typography
+          as="li"
+          variant="small"
+          color="blue"
+          className="p-1 font-bold"
+        >
+          <a href="/lop-hoc-khoa-vien" className="flex items-center">
+            Quản lý lớp học
+          </a>
+        </Typography>
+      ) : null}
+      {isClient && IsRole([Position.SECRETARY]) ? (
+        <div className="flex">
+          <Typography
+            as="li"
+            variant="small"
+            color="blue"
+            className="p-1 font-bold"
+          >
+            <a href="/teachers" className="flex items-center">
+              Quản lý giảng viên khoa
+            </a>
+          </Typography>
+          <Typography
+            as="li"
+            variant="small"
+            color="blue"
+            className="p-1 font-bold"
+          >
+            <a href="/students" className="flex items-center">
+              Quản lý sinh viên khoa
+            </a>
+          </Typography>
+        </div>
+      ) : null}
       {isClient && IsRole([Position.STUDENT]) ? (
         <Typography
           as="li"
           variant="small"
-          color="blue-gray"
-          className="p-1 font-normal"
+          color="blue"
+          className="p-1 font-bold"
         >
           <a href="/dang-ky-hoc-phan" className="flex items-center">
             Đăng ký học phần
@@ -269,8 +320,14 @@ const profileMenuItems = [
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [avatar, setAvatar] = React.useState("");
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  React.useEffect(() => {
+    const getAvatar = getLocalStorage("avatar");
+    if (getAvatar) setAvatar(getAvatar);
+  });
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -285,7 +342,7 @@ function ProfileMenu() {
             size="sm"
             alt="tania andrew"
             className="border border-gray-900 p-0.5"
-            src="/images/user2.png"
+            src={avatar ?? "/images/user2.png"}
           />
           <ChevronDownIcon
             strokeWidth={2.5}
@@ -327,6 +384,14 @@ function ProfileMenu() {
 
 const navListMenuItems = [
   {
+    title: "Quản lý khoa/viện",
+    url: "/quan-ly-khoa-vien",
+  },
+  {
+    title: "Quản lý lịch giảng dạy",
+    url: "/lich-giang-day",
+  },
+  {
     title: "Quản lý nhân sự",
     url: "/quan-ly-nhan-su",
   },
@@ -366,8 +431,8 @@ function NavListMenu() {
       <Menu allowHover open={isMenuOpen} handler={setIsMenuOpen}>
         <MenuHandler>
           <Typography as="a" href="#" variant="small" className="font-normal">
-            <MenuItem className="hidden items-center gap-2 font-medium text-blue-gray-900 lg:flex lg:rounded-full">
-              <Square3Stack3DIcon className="h-[18px] w-[18px] text-blue-gray-500" />{" "}
+            <MenuItem className="hidden items-center gap-2  text-blue-500  font-bold lg:flex lg:rounded-full">
+              <Square3Stack3DIcon className="h-[18px] w-[18px] text-blue-500 " />{" "}
               Quản lý đào tạo{" "}
               <ChevronDownIcon
                 strokeWidth={2}

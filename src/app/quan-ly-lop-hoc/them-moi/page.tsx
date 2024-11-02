@@ -2,9 +2,19 @@
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
 import { Class } from "@/models/Classes";
+import { ClassSchedule } from "@/models/ClassSchedule";
 import { Course } from "@/models/Course";
+import { Faculty } from "@/models/Faculty";
+import { Schedule } from "@/models/Schedule";
 import { Position, PositionLabels, User } from "@/models/User";
-import { createClass, fetchCourses, fetchUsers } from "@/services/service";
+import {
+  createClass,
+  fetchCourses,
+  fetchFaculties,
+  fetchSchedules,
+  fetchUsers,
+  getScheduleById,
+} from "@/services/service";
 import {
   Card,
   Input,
@@ -18,6 +28,7 @@ import {
 import { format } from "date-fns";
 import React from "react";
 import { useEffect, useState } from "react";
+import ScheduleSelection from "./ScheduleSelection";
 
 export default function IndexPage() {
   const { addAlert } = useAlert();
@@ -30,10 +41,20 @@ export default function IndexPage() {
     course_id: null,
     schedule: "",
     created_at: "",
+    faculty_id: 0,
   });
   const [courses, setCourses] = React.useState<Course[]>([]);
+  const [schedules, setSchedules] = React.useState<Schedule[]>([]);
   const [users, setUsers] = React.useState<User[]>([]);
   const [state, setState] = React.useState<boolean>();
+  const [scheduleSelected, setScheduleSelected] = React.useState<
+    ClassSchedule[]
+  >([]);
+  const [dataFaculties, setDataFaculty] = useState<Faculty[]>([]);
+
+  const handleScheduleChange = (selections: ClassSchedule[]) => {
+    setScheduleSelected(selections);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,6 +67,9 @@ export default function IndexPage() {
       });
       setCourses(filteredCourses);
 
+      const dataSche = await fetchSchedules();
+      setSchedules(dataSche);
+
       const dataUsers = await fetchUsers();
       const filteredUsers = dataUsers.filter((item) => {
         return (
@@ -53,6 +77,17 @@ export default function IndexPage() {
           item.chuc_vu === PositionLabels[Position.SUB_TEACHER]
         );
       });
+
+      const fetchData = async () => {
+        try {
+          const data = await fetchFaculties();
+          setDataFaculty(data);
+        } catch (error) {
+          addAlert(AlertType.info, "Lỗi lấy danh sách môn học: " + error);
+        }
+      };
+
+      fetchData();
       setUsers(filteredUsers);
 
       setState(false);
@@ -69,7 +104,6 @@ export default function IndexPage() {
     }));
   };
   const handleSelectChange = (name: string, value: any) => {
-    console.log(value);
     setClass((prevClass) => ({
       ...prevClass,
       [name]: value,
@@ -119,7 +153,27 @@ export default function IndexPage() {
     e.preventDefault();
     try {
       if (validateData()) return;
-      await createClass(classes);
+      const validSchedules = scheduleSelected.filter(
+        (schedule) => schedule.schedule_id !== 0 && schedule.dayOfWeek !== ""
+      );
+
+      if (validSchedules.length === 0) {
+        addAlert(
+          AlertType.error,
+          "Vui lòng chọn ít nhất một lịch học (tiết và thứ)"
+        );
+        return;
+      }
+
+      const classToCreate: Class = {
+        ...classes,
+        ClassSchedules: validSchedules.map((schedule) => ({
+          ...schedule,
+          class_id: 0,
+        })),
+      };
+
+      await createClass(classToCreate);
       addAlert(AlertType.success, `Tạo lớp học: ${classes.name} thành công`);
     } catch (error) {
       console.error("Lỗi:", error);
@@ -213,6 +267,50 @@ export default function IndexPage() {
                 )}
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
+                    <Select
+                      name="subject_id"
+                      label="Chọn khoa/viện (*)"
+                      key={classes.faculty_id}
+                      value={classes.faculty_id.toString()}
+                      onChange={(value: any) =>
+                        handleSelectChange("faculty_id", value)
+                      }
+                    >
+                      {dataFaculties.map((faculty) => (
+                        <Option
+                          key={faculty.faculty_id}
+                          value={faculty.faculty_id.toString()}
+                        >
+                          {faculty.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="mx-4 w-full">
+                    <Select
+                      name="course_id"
+                      label="Chọn học phần"
+                      placeholder="Chọn học phần"
+                      key={classes.course_id}
+                      value={classes.course_id?.toString()}
+                      onChange={(value: any) =>
+                        handleSelectChange("course_id", value)
+                      }
+                      disabled={state}
+                    >
+                      {courses.map((course) => (
+                        <Option
+                          key={course.course_id}
+                          value={course.course_id.toString()}
+                        >
+                          {course.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="mx-4 w-full">
                     <Input
                       name="name"
                       label="Tên lớp học (*)"
@@ -249,43 +347,11 @@ export default function IndexPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-between">
-                  <div className="mx-4 w-full">
-                    <Select
-                      name="course_id"
-                      label="Chọn khóa học (*)"
-                      placeholder="Chọn khóa học"
-                      key={classes.course_id}
-                      value={classes.course_id?.toString()}
-                      onChange={(value: any) =>
-                        handleSelectChange("course_id", value)
-                      }
-                      disabled={state}
-                    >
-                      {courses.map((course) => (
-                        <Option
-                          key={course.course_id}
-                          value={course.course_id.toString()}
-                        >
-                          {course.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="mx-4 w-full">
-                    <Input
-                      name="schedule"
-                      label="Lịch dạy (*)"
-                      crossOrigin=""
-                      type="text"
-                      size="lg"
-                      placeholder=""
-                      className="max-h-10"
-                      disabled={state}
-                      value={classes.schedule!}
-                      onChange={handleInputChange}
-                    />
-                  </div>
+                <div className="w-full">
+                  <ScheduleSelection
+                    schedules={schedules}
+                    onScheduleChange={handleScheduleChange}
+                  />
                 </div>
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">

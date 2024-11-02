@@ -1,25 +1,29 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
-import YouTubePlayer from "@/app/components/youtubeplayer";
+import VideoPlayer from "@/app/components/videoplayer";
 import { MiddlewareAuthen } from "@/middleware/Authen";
 import { Lession } from "@/models/Lession";
 import { Position } from "@/models/User";
 import IsRole from "@/services/authService";
 import {
+  apiBackend,
+  apiBase,
   createLession,
   deleteLession,
   fetchLessions,
   getLessionById,
   updateLession,
+  uploadVideo,
 } from "@/services/service";
 import { Button, Input, Textarea, Typography } from "@material-tailwind/react";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function LessionVideo({ id }: { id: number }) {
   const [isShow, setIsShow] = useState(true);
   const [canRole, setRole] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
   const [titleEditor, setTitleEditor] = useState(false);
   const [lession, setLession] = useState<Lession>({
     class_id: 0,
@@ -31,6 +35,7 @@ function LessionVideo({ id }: { id: number }) {
   });
   const [lessions, setLessions] = useState<Lession[]>([]);
   const { addAlert } = useAlert();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setRole(IsRole([Position.ADVISOR, Position.SUB_TEACHER]));
@@ -46,23 +51,11 @@ function LessionVideo({ id }: { id: number }) {
     const data = await fetchLessions(id);
     setLessions(data);
   };
-  function isValidYouTubeUrl(url: string) {
-    const regex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/(watch\?v=|embed\/|v\/|.+\?v=)?([a-zA-Z0-9_-]{11})$/;
-    return regex.test(url);
-  }
 
   const handlePost = async () => {
     try {
       if (lession.title.trim().length < 10) {
         addAlert(AlertType.info, "Tiêu đề quá ngắn!");
-        return;
-      }
-      if (isValidYouTubeUrl(lession.link)) {
-        addAlert(
-          AlertType.info,
-          "Link video youtube không hợp lệ! Bạn hãy kiểm tra lại"
-        );
         return;
       }
 
@@ -78,6 +71,9 @@ function LessionVideo({ id }: { id: number }) {
       lession.description = "";
       lession.link = "";
       lession.title = "";
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       addAlert(AlertType.error, "Có lỗi xảy ra: " + error);
     }
@@ -89,7 +85,48 @@ function LessionVideo({ id }: { id: number }) {
       [name]: value,
     }));
   };
+  const handleInputChange2 = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setLession((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
+  const handleInputChangeVideo = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
 
+    if (file) {
+      if (file.type !== "video/mp4") {
+        addAlert(AlertType.info, "Vui lòng tải lên tệp định dạng .mp4");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("video", file);
+
+      try {
+        const response = await uploadVideo(formData);
+        if (response) {
+          setLession((prevLession) => ({
+            ...prevLession,
+            link: apiBackend + response,
+          }));
+
+          setUploaded(true);
+          addAlert(AlertType.success, "Đã tải lên video.");
+        } else {
+          addAlert(AlertType.info, "Lỗi khi tải video.");
+        }
+      } catch (error) {
+        addAlert(AlertType.error, "Lỗi khi xử lý video: " + error);
+      }
+    } else {
+      lession.link = "";
+      setUploaded(false);
+    }
+  };
   const editLession = async (id: number) => {
     setTitleEditor(true);
     const lessionData = await getLessionById(id);
@@ -150,6 +187,7 @@ function LessionVideo({ id }: { id: number }) {
                           name="title"
                           label="Tiêu đề bài giảng (*)"
                           crossOrigin=""
+                          autoComplete="title"
                           size="lg"
                           className=""
                           value={lession.title}
@@ -160,9 +198,11 @@ function LessionVideo({ id }: { id: number }) {
                     <div className="flex justify-between">
                       <div className="mx-4 w-full">
                         <Input
+                          disabled={uploaded}
                           name="link"
                           label="Url video (*)"
                           crossOrigin=""
+                          autoComplete="link"
                           type="url"
                           size="lg"
                           className=" "
@@ -170,17 +210,31 @@ function LessionVideo({ id }: { id: number }) {
                           onChange={handleInputChange}
                         />
                       </div>
+                      <div>
+                        <Input
+                          ref={fileInputRef}
+                          name="video"
+                          label="Tải lên"
+                          crossOrigin=""
+                          type="file"
+                          size="lg"
+                          className=" "
+                          accept="video/mp4"
+                          onChange={handleInputChangeVideo}
+                        />
+                      </div>
                     </div>
                     <div className="flex justify-between">
                       <div className="mx-4 w-full">
                         <Textarea
                           name="description"
+                          autoComplete="description"
                           label="Mô tả"
                           rows={2}
                           size="lg"
                           className=" "
                           value={lession.description}
-                          onChange={() => handleInputChange}
+                          onChange={(e) => handleInputChange2(e)}
                         />
                       </div>
                     </div>
@@ -239,7 +293,7 @@ function LessionVideo({ id }: { id: number }) {
                     )}
                   </div>
                   <div className="w-full bg-white shadow-md rounded-lg p-6">
-                    <YouTubePlayer link={lession.link} />
+                    <VideoPlayer link={lession.link} />
                     <Typography>{lession.description}</Typography>
                   </div>
                 </div>

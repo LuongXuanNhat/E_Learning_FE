@@ -26,7 +26,7 @@ export function MiddlewareAuthor<P extends object>(
       } else {
         let result = false;
         positions.forEach((item) => {
-          if (user?.chuc_vu == PositionLabels[item]) {
+          if (user?.role == item) {
             result = true;
           }
         });

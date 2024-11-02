@@ -19,7 +19,7 @@ export function MiddlewareAuthen<P extends object>(
         addAlert(AlertType.info, "Vui lòng đăng nhập để tiếp tục");
         setCookie(CookieName.isReload, "true");
       }
-    }, [addAlert]);
+    }, []);
     if (isAuthenticated) {
       return (
         <div className="flex pt-52 font-bold justify-center items-center">
