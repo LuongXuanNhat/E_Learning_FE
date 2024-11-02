@@ -94,7 +94,7 @@ export function HomePage() {
                   className="w-24 h-24 object-cover rounded"
                 />
                 <a href={item.href} target="blank">
-                  <h4 className="text-sm font-medium hover:text-blue-600 cursor-pointer">
+                  <h4 className="text-sm  text-gray-900 font-medium hover:text-blue-600 cursor-pointer">
                     {item.title}
                   </h4>
                   <p className="text-xs text-gray-500 mt-1">{item.date}</p>

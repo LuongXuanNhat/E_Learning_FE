@@ -81,7 +81,9 @@ function IndexPage({ params }: { params: { id: number } }) {
       avatar_url: null,
       is_active: true,
       created_at: "",
+      faculty_id: 0,
     },
+    faculty_id: 0,
   });
   const [allowedTabs, setAllowedTabs] = useState<TabItem[]>([]);
   const [activeTab, setActiveTab] = useState("dashboard");

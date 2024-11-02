@@ -5,11 +5,7 @@ import { MiddlewareAuthor } from "@/middleware/Author";
 import { Course, de_xuat_ten_khoa_hoc } from "@/models/Course";
 import { Subject } from "@/models/Subject";
 import { Position, User } from "@/models/User";
-import {
-  createCourse,
-  createUser,
-  fetchSubjects,
-} from "@/services/service";
+import { createCourse, createUser, fetchSubjects } from "@/services/service";
 import {
   Card,
   Input,
@@ -83,7 +79,7 @@ function IndexPage() {
     }
 
     if (course.name === "") {
-      addAlert(AlertType.warning, "Hãy chọn khóa học/môn học");
+      addAlert(AlertType.warning, "Hãy Chọn môn học/môn học");
       return true;
     }
     const startDate = new Date(course.start_date);
@@ -172,7 +168,7 @@ function IndexPage() {
                   <div className="mx-4 w-full">
                     <Select
                       name="subject_id"
-                      label="Chọn khóa học (*)"
+                      label="Chọn môn học (*)"
                       key={course.subject_id}
                       value={course.subject_id.toString()}
                       onChange={(value: any) =>

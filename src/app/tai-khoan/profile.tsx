@@ -22,7 +22,7 @@ import {
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { MiddlewareAuthen } from "../../middleware/Authen";
-import { getCookieUser } from "../../services/authService";
+import { getCookieUser, getLocalStorage } from "../../services/authService";
 import AvatarSelector from "../components/avatar";
 
 function IndexPage() {
@@ -42,6 +42,7 @@ function IndexPage() {
     avatar_url: null,
     is_active: true,
     created_at: "",
+    faculty_id: 0,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +101,8 @@ function IndexPage() {
     e.preventDefault();
     try {
       if (validateData()) return;
+      const getAvatar = getLocalStorage("avatar");
+      if (getAvatar) user.avatar_url = getAvatar;
       await updateUser(user);
       addAlert(
         AlertType.success,
@@ -142,7 +145,12 @@ function IndexPage() {
     }));
   };
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
   return (
     <div className="py-3">
       <Card color="transparent" shadow={false}>
@@ -180,65 +188,13 @@ function IndexPage() {
                     />
                   </div>
                 </div>
-                {/* <div className="flex justify-between">
-                  <div className="mx-4 w-full">
-                    <Input
-                      label="Ngày sinh"
-                      crossOrigin=""
-                      type="date"
-                      size="lg"
-                      placeholder="01/01/2000"
-                      className=" "
-                    />
-                  </div>
-                  <div className="mx-4 w-full">
-                    <Typography
-                      variant="h6"
-                      color="blue-gray"
-                      className="-mb-3"
-                    >
-                      Giới tính
-                    </Typography>
-                    <div className="flex justify-around">
-                      <Radio
-                        name="sex"
-                        color="blue"
-                        crossOrigin=""
-                        label={
-                          <Typography
-                            variant="small"
-                            color="gray"
-                            className="flex items-center font-normal"
-                          >
-                            Nam
-                          </Typography>
-                        }
-                        containerProps={{ className: "-ml-2.5" }}
-                      />
-                      <Radio
-                        name="sex"
-                        color="blue"
-                        crossOrigin=""
-                        label={
-                          <Typography
-                            variant="small"
-                            color="gray"
-                            className="flex items-center font-normal"
-                          >
-                            Nữ
-                          </Typography>
-                        }
-                        containerProps={{ className: "-ml-2.5" }}
-                      />
-                    </div>
-                  </div>
-                </div> */}
+
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
                     <Select
                       name="chuc_vu"
                       label="Chọn chức vụ (*)"
-                      value={`Loại tài khoản: ` + user.chuc_vu}
+                      value={`Chức vụ: ` + user.chuc_vu}
                       disabled={true}
                     >
                       {Object.values(Position).map((chuc_vu) => (

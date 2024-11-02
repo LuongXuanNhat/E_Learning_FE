@@ -1,6 +1,8 @@
 "use client";
 
 import { AlertType, useAlert } from "@/app/components/Alert/alertbase";
+import { MiddlewareAuthor } from "@/middleware/Author";
+import { Faculty } from "@/models/Faculty";
 import {
   getPositionFromString,
   Position,
@@ -8,7 +10,7 @@ import {
   Rank,
   User,
 } from "@/models/User";
-import { createUser } from "@/services/service";
+import { createUser, fetchFaculties } from "@/services/service";
 import {
   Card,
   Input,
@@ -19,10 +21,12 @@ import {
   input,
   Select,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function IndexPage() {
+function IndexPage() {
   const { alerts, addAlert } = useAlert();
+  const [dataFaculties, setDataFaculty] = useState<Faculty[]>([]);
+
   const [user, setUser] = useState<User>({
     user_id: 0,
     username: "",
@@ -35,7 +39,21 @@ export default function IndexPage() {
     avatar_url: null,
     is_active: true,
     created_at: "",
+    faculty_id: 0,
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchFaculties();
+        setDataFaculty(data);
+      } catch (error) {
+        addAlert(AlertType.info, "Lỗi lấy danh sách môn học: " + error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -166,55 +184,24 @@ export default function IndexPage() {
                 </div>
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
-                    <Input
-                      label="Ngày sinh"
-                      crossOrigin=""
-                      type="date"
-                      size="lg"
-                      placeholder="01/01/2000"
-                      className=" "
-                    />
-                  </div>
-                  <div className="mx-4 w-full">
-                    <Typography
-                      variant="h6"
-                      color="blue-gray"
-                      className="-mb-3"
+                    <Select
+                      name="subject_id"
+                      label="Chọn khoa/viện (*)"
+                      key={user.faculty_id}
+                      value={user.faculty_id.toString()}
+                      onChange={(value: any) =>
+                        handleSelectChange("faculty_id", value)
+                      }
                     >
-                      Giới tính
-                    </Typography>
-                    <div className="flex justify-around">
-                      <Radio
-                        name="sex"
-                        color="blue"
-                        crossOrigin=""
-                        label={
-                          <Typography
-                            variant="small"
-                            color="gray"
-                            className="flex items-center font-normal"
-                          >
-                            Nam
-                          </Typography>
-                        }
-                        containerProps={{ className: "-ml-2.5" }}
-                      />
-                      <Radio
-                        name="sex"
-                        color="blue"
-                        crossOrigin=""
-                        label={
-                          <Typography
-                            variant="small"
-                            color="gray"
-                            className="flex items-center font-normal"
-                          >
-                            Nữ
-                          </Typography>
-                        }
-                        containerProps={{ className: "-ml-2.5" }}
-                      />
-                    </div>
+                      {dataFaculties.map((faculty) => (
+                        <Option
+                          key={faculty.faculty_id}
+                          value={faculty.faculty_id.toString()}
+                        >
+                          {faculty.name}
+                        </Option>
+                      ))}
+                    </Select>
                   </div>
                 </div>
                 <div className="flex justify-between">
@@ -299,3 +286,7 @@ export default function IndexPage() {
     </div>
   );
 }
+export default MiddlewareAuthor(IndexPage, [
+  Position.EDUCATION,
+  Position.HEAD_EDUCATION,
+]);

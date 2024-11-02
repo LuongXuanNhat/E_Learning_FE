@@ -1,3 +1,5 @@
+import { Faculty } from "./Faculty";
+
 export interface User {
   user_id: number;
   username: string;
@@ -10,8 +12,9 @@ export interface User {
   avatar_url: string | null;
   is_active: boolean;
   created_at: string | Date;
-
+  faculty_id: number | 0;
   avatar?: string;
+  Faculty?: Faculty;
 }
 
 export enum Position {
@@ -25,6 +28,8 @@ export enum Position {
   ADVISOR = "ADVISOR",
   // Thư ký khoa
   SECRETARY = "SECRETARY",
+  // Trường phòng đào tạo
+  HEAD_EDUCATION = "HEAD_EDUCATION",
 }
 
 export const PositionLabels: Record<Position, string> = {
@@ -33,6 +38,7 @@ export const PositionLabels: Record<Position, string> = {
   [Position.EDUCATION]: "Phòng đào tạo",
   [Position.ADVISOR]: "Cố vấn học tập",
   [Position.SECRETARY]: "Thư ký",
+  [Position.HEAD_EDUCATION]: "Trưởng phòng đào tạo",
 };
 
 export const LabelToPosition: Record<string, Position> = Object.entries(

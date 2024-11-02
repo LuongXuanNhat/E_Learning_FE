@@ -28,6 +28,7 @@ export default function ClassMember({ id }: { id: number }) {
     course_id: null,
     schedule: "",
     created_at: "",
+    faculty_id: 0,
     Course: {
       start_date: new Date(),
       end_date: new Date(),
@@ -52,6 +53,7 @@ export default function ClassMember({ id }: { id: number }) {
       avatar_url: null,
       is_active: true,
       created_at: "",
+      faculty_id: 0,
     },
   });
 

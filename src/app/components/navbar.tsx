@@ -123,10 +123,34 @@ export function StickyNavbar() {
           color="blue"
           className="p-1 font-bold"
         >
-          <a href="/danh-gia-lop-hoc" className="flex items-center">
-            Quản lý đánh giá lớp học
+          <a href="/lop-hoc-khoa-vien" className="flex items-center">
+            Quản lý lớp học
           </a>
         </Typography>
+      ) : null}
+      {isClient && IsRole([Position.SECRETARY]) ? (
+        <div className="flex">
+          <Typography
+            as="li"
+            variant="small"
+            color="blue"
+            className="p-1 font-bold"
+          >
+            <a href="/teachers" className="flex items-center">
+              Quản lý giảng viên khoa
+            </a>
+          </Typography>
+          <Typography
+            as="li"
+            variant="small"
+            color="blue"
+            className="p-1 font-bold"
+          >
+            <a href="/students" className="flex items-center">
+              Quản lý sinh viên khoa
+            </a>
+          </Typography>
+        </div>
       ) : null}
       {isClient && IsRole([Position.STUDENT]) ? (
         <Typography
@@ -359,6 +383,14 @@ function ProfileMenu() {
 }
 
 const navListMenuItems = [
+  {
+    title: "Quản lý khoa/viện",
+    url: "/quan-ly-khoa-vien",
+  },
+  {
+    title: "Quản lý lịch giảng dạy",
+    url: "/lich-giang-day",
+  },
   {
     title: "Quản lý nhân sự",
     url: "/quan-ly-nhan-su",

@@ -286,9 +286,9 @@ function DashboardclassName({ id }: { id: number }) {
                     <div className="flex justify-between">
                       <div className="flex justify-end items-center">
                         <span className=" w-52">Đính kèm tài liệu: </span>
-                        <Button className="mr-2 w-[200px]">
+                        {/* <Button className="mr-2 w-[200px]">
                           Từ kho tài liệu
-                        </Button>
+                        </Button> */}
                         <Input
                           label="Tải lên"
                           crossOrigin=""

@@ -1,91 +1,85 @@
 "use client";
-import {
-  Button,
-  Select,
-  Typography,
-  Option,
-  IconButton,
-} from "@material-tailwind/react";
-import { Position, User } from "../../models/User";
-import {
-  deleteClass,
-  fetchClasses,
-  fetchClassRegisterForAdmin,
-  fetchCourseClass,
-  fetchUsers,
-} from "../../services/service";
+import { Button, Select, Typography, Option } from "@material-tailwind/react";
+import { deleteSchedule, fetchSchedules } from "../../services/service";
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import Pagination from "../components/paging";
 import { format } from "date-fns";
-import { Class } from "../../models/Classes";
-import loading from "../components/loading";
 import { AlertType, useAlert } from "../components/Alert/alertbase";
 import { MiddlewareAuthor } from "../../middleware/Author";
+import { Position } from "../../models/User";
+import { Schedule } from "@/models/Schedule";
 
-function ReviewClass() {
-  const [users, setClases] = useState<Class[]>([]);
+function ScheduleManager() {
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentClasses, setCurrentClasses] = useState<Class[]>([]);
-  const [originalClasses, setOriginalClasses] = useState<Class[]>([]);
+  const [currentSchedules, setCurrentSchedules] = useState<Schedule[]>([]);
+  const [originalSchedules, setOriginalSchedules] = useState<Schedule[]>([]);
   const { addAlert } = useAlert();
 
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (searchTerm === "") {
-      setClases(originalClasses);
+      setSchedules(originalSchedules);
     }
     const searchWords = searchTerm
       .split(" ")
       .map((word) => word.trim().toLowerCase())
       .filter((word) => word.length > 0);
 
-    const filteredClasses = originalClasses.filter((clas) => {
-      const userId = clas.class_id.toString().toLowerCase();
-      const name = clas.name.toLowerCase();
+    const filteredUsers = originalSchedules.filter((user) => {
+      const userId = user.schedule_id.toString().toLowerCase();
+      const name = user.name.toLowerCase();
 
       return searchWords.every(
         (word) => userId.includes(word) || name.includes(word)
       );
     });
 
-    setClases(filteredClasses);
+    setSchedules(filteredUsers);
   };
   useEffect(() => {
-    const loadClasses = async () => {
+    const loadSchedules = async () => {
       try {
-        const data = await fetchClasses();
-        setClases(data);
-        setOriginalClasses(data);
+        const data = await fetchSchedules();
+        setSchedules(data);
+        setOriginalSchedules(data);
         setLoading(false);
       } catch (err) {
-        setError("Có lỗi xảy ra khi tải dữ liệu lớp học:" + err);
+        setError("Có lỗi xảy ra khi tải lịch dạy: " + err);
         setLoading(false);
       }
     };
 
-    loadClasses();
+    loadSchedules();
   }, []);
   const deleteConfirm = async function (id: number) {
     try {
-      await deleteClass(id);
-      const data = await fetchCourseClass();
-      setClases(data);
-      setOriginalClasses(data);
+      await deleteSchedule(id);
+      const data = await fetchSchedules();
+      setSchedules(data);
+      setOriginalSchedules(data);
+      setLoading(false);
       addAlert(AlertType.success, "Đã xóa thành công.");
     } catch (err) {
-      setError("Có lỗi xảy ra khi xóa dữ liệu  lớp học.");
+      setError("Có lỗi xảy ra khi xóa dữ liệu khoa viện.");
     }
   };
+
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
 
   return (
     <div className="relative flex flex-col pb-20 w-full h-full overflow-scroll text-gray-700 bg-white shadow-md ">
       <div className="flex justify-between items-center">
         <Typography variant="h4" color="blue-gray" className="py-5 pl-5">
-          Danh sách đánh giá lớp học
+          Danh sách lịch
         </Typography>
         <div className="flex justify-center">
           <div className="flex justify-center">
@@ -124,15 +118,15 @@ function ReviewClass() {
               className="w-full"
               onClick={() => {
                 setSearchTerm("");
-                setClases(originalClasses);
+                setSchedules(originalSchedules);
               }}
             >
               Xóa tìm kiếm
             </Button>
           </div>
-          <a href="/quan-ly-lop-hoc/them-moi" className="min-w-52">
+          <a href="/lich-giang-day/them-moi" className="min-w-52">
             <Button ripple={true} className="bg-blue-700 mx-2">
-              Thêm mới lớp học
+              Thêm mới lịch dạy
             </Button>
           </a>
         </div>
@@ -147,25 +141,19 @@ function ReviewClass() {
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Tên lớp
+                Tên
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Mô tả
+                Chi tiết
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Học phần
+                Ngày tạo
               </p>
             </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                CVHT/GVBM
-              </p>
-            </th>
-
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                 Hành động
@@ -174,58 +162,60 @@ function ReviewClass() {
           </tr>
         </thead>
         <tbody>
-          {currentClasses.map((classes) => (
-            <tr key={classes.class_id}>
+          {currentSchedules.map((schedule: Schedule) => (
+            <tr key={schedule.schedule_id}>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {classes.class_id}
+                  {schedule.schedule_id}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {classes.name}
+                  {schedule.name}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {classes.description}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {classes.Course?.name}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {classes.Advisor?.name}
+                  {schedule.description}
                 </p>
               </td>
 
-              <td className="p-4 border-b border-blue-gray-50 flex justify-around">
+              <td className="p-4 border-b border-blue-gray-50">
+                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                  {format(new Date(schedule.created_at), "dd-MM-yyyy HH:mm")}
+                </p>
+              </td>
+
+              <td className="p-4 border-b border-blue-gray-50 flex justify-center">
                 <a
-                  target="_blank"
-                  href={`/danh-gia-lop-hoc/${classes.class_id}`}
-                  className="block font-sans text-sm antialiased font-medium leading-normal text-blue-gray-900"
+                  href={`/lich-giang-day/${schedule.schedule_id}`}
+                  className="block font-sans text-sm antialiased font-medium leading-normal text-blue-gray-900 mr-2"
                 >
-                  <Button color="orange" className="capitalize ml-2">
-                    Xem đánh giá
+                  <Button color="amber" className="capitalize">
+                    Chỉnh sửa
                   </Button>
                 </a>
+                <Button
+                  color="red"
+                  className="capitalize"
+                  onClick={() => deleteConfirm(schedule.schedule_id)}
+                >
+                  Xóa
+                </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       <Pagination
-        data={users}
+        data={schedules}
         itemsPerPageOptions={[1, 2, 5, 10, 20, 50]}
-        onPageChange={setCurrentClasses}
+        onPageChange={setCurrentSchedules}
       />
     </div>
   );
 }
-export default MiddlewareAuthor(ReviewClass, [
-  Position.SECRETARY,
-  Position.ADVISOR,
+export default MiddlewareAuthor(ScheduleManager, [
+  Position.HEAD_EDUCATION,
+  Position.EDUCATION,
 ]);

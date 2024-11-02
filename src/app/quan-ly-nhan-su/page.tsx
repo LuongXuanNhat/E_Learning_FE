@@ -76,7 +76,12 @@ function EmployeeManager() {
     }
   };
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
 
   return (
     <div className="relative flex flex-col pb-20 w-full h-full overflow-scroll text-gray-700 bg-white shadow-md ">
@@ -164,22 +169,17 @@ function EmployeeManager() {
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Chức vụ
-              </p>
-            </th>
-            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-              <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                 Cấp bậc
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Hình ảnh
+                Ngày tạo
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                Ngày tạo
+                Avatar
               </p>
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
@@ -191,7 +191,10 @@ function EmployeeManager() {
         </thead>
         <tbody>
           {currentUsers.map((user) => (
-            <tr key={user.user_id}>
+            <tr
+              key={user.user_id}
+              className={!user.is_active ? "bg-gray-500" : ""}
+            >
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                   {user.user_id}
@@ -219,23 +222,21 @@ function EmployeeManager() {
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {user.chuc_vu}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                   {user.cap_bac}
-                </p>
-              </td>
-              <td className="p-4 border-b border-blue-gray-50">
-                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                  {user.avatar_url}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                   {format(new Date(user.created_at), "dd-MM-yyyy HH:mm")}
                 </p>
+              </td>
+              <td className="p-4 border-b border-blue-gray-50">
+                <img
+                  hidden={!user.avatar_url}
+                  src={user.avatar_url ? user.avatar_url : ""}
+                  alt=""
+                  className="h-10 w-10 bg-cover  rounded-full"
+                />
               </td>
               <td className="p-4 border-b border-blue-gray-50 flex justify-around">
                 <a
@@ -251,7 +252,7 @@ function EmployeeManager() {
                   className="capitalize"
                   onClick={() => deleteConfirm(user.user_id)}
                 >
-                  Xóa
+                  {!user.is_active ? "Mở khóa" : "Khóa"}
                 </Button>
               </td>
             </tr>

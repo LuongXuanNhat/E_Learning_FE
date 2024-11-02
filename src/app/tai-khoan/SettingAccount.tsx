@@ -104,7 +104,12 @@ function IndexPage() {
   }, []);
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
 
   function setValuePass(val: ChangeEvent<HTMLInputElement>): void {
     setCurrentPassword(val.target.value);

@@ -55,7 +55,12 @@ function TeacherClasses() {
   }, []);
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error)
+    return (
+      <div className="flex w-full h-full justify-center my-auto pt-10">
+        {error}
+      </div>
+    );
 
   return (
     <div className="relative flex flex-col pb-20 w-full h-full overflow-scroll text-gray-700 bg-white shadow-md ">

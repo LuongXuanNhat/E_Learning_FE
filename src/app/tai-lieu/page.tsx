@@ -27,12 +27,12 @@ function DocumentBank() {
   const [currentDocuments, setCurrentDocuments] = useState<Document[]>([]);
   const { addAlert } = useAlert();
   const [canRole, setRole] = useState(false);
-  const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(true);
   const [uploaded, setUploaded] = useState(false);
   const [isTookAttendance, setIsTookAttendance] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [titleEditor, setTitleEditor] = useState(false);
+  const [canConfirm, setCanConfirm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [document, setDocument] = useState<Document>({
     author_id: 0,
@@ -43,6 +43,21 @@ function DocumentBank() {
     title: "",
     is_active: false,
   });
+  const [userCurrent, setUserCurrent] = useState<User>({
+    user_id: 0,
+    username: "",
+    name: "",
+    cap_bac: "",
+    chuc_vu: "",
+    email: "",
+    password: "",
+    role: undefined,
+    avatar_url: null,
+    is_active: true,
+    created_at: "",
+    faculty_id: 0,
+  });
+
   const handleSearch = (searchValue: string) => {
     if (searchValue.trim() === "") {
       setDocuments(currentDocuments);
@@ -73,11 +88,20 @@ function DocumentBank() {
     setIsShow(false);
   };
   useEffect(() => {
+    const userCurrentA = getCookieUser();
+    setUserCurrent(userCurrentA!);
+
     setRole(IsRole([Position.ADVISOR, Position.SUB_TEACHER]));
     fetchDocumentData();
 
-    const account = getCookieUser();
-    setUser(account!);
+    const docs = documents.filter(
+      (doc) =>
+        doc.is_active == false &&
+        doc.Author?.faculty_id == userCurrent.faculty_id
+    );
+    if (docs && docs.length > 0) {
+      setCanConfirm(true);
+    }
 
     setLoading(false);
   }, []);
@@ -87,8 +111,14 @@ function DocumentBank() {
   };
   const fetchDocumentData = async () => {
     const data = await fetchDocuments();
-    setDocuments(data);
-    setCurrentDocuments(data);
+    if (userCurrent.role !== Position.SECRETARY) {
+      const docs = data.filter((doc) => doc.is_active === true);
+      setDocuments(docs);
+      setCurrentDocuments(docs);
+    } else {
+      setDocuments(data);
+      setCurrentDocuments(data);
+    }
   };
   const handlePost = async () => {
     try {
@@ -103,7 +133,7 @@ function DocumentBank() {
       fetchDocumentData();
       addAlert(
         AlertType.success,
-        `${titleEditor ? "Cập nhật" : "Đăng"} bài giảng thành công`
+        `${titleEditor ? "Cập nhật" : "Gửi"} tài liệu thành công`
       );
       document.description = "";
       document.link = "";
@@ -185,6 +215,45 @@ function DocumentBank() {
       addAlert(AlertType.error, "Có lỗi xảy ra: " + error);
     }
   };
+  const filterDocuments = async function () {
+    try {
+      const docs = documents.map((d) => {
+        if (d.Author?.faculty_id === userCurrent.faculty_id) {
+          return { ...d, is_active: true };
+        }
+        return d;
+      });
+
+      setDocuments(docs);
+
+      await Promise.all(
+        docs.map(async (doc) => {
+          if (doc.is_active) {
+            await updateDocument(doc);
+          }
+        })
+      );
+    } catch (error) {
+      addAlert(AlertType.error, "Có lỗi khi lọc tài liệu");
+    }
+  };
+
+  const ActiveDocument = async function (doc: Document) {
+    try {
+      doc.is_active = true;
+      await updateDocument(doc);
+
+      const docs = documents.map((d) =>
+        d.document_id === doc.document_id ? { ...d, is_active: true } : d
+      );
+      setDocuments(docs);
+
+      addAlert(AlertType.success, "Đã duyệt");
+    } catch (error) {
+      addAlert(AlertType.error, "Có lỗi khi duyệt tài liệu");
+    }
+  };
+
   if (loading) return <Loading />;
   return (
     <div>
@@ -192,12 +261,12 @@ function DocumentBank() {
         <div className="md:w-96">
           {isRollCall &&
           !isTookAttendance &&
-          user!.chuc_vu == PositionLabels[Position.STUDENT] ? (
+          userCurrent!.chuc_vu == PositionLabels[Position.STUDENT] ? (
             <Button color="green" ripple={true} onClick={handlePost}>
               Điểm danh hôm nay ({format(new Date(), "dd-MM-yyyy")})
             </Button>
           ) : isTookAttendance &&
-            user!.chuc_vu == PositionLabels[Position.STUDENT] ? (
+            userCurrent!.chuc_vu == PositionLabels[Position.STUDENT] ? (
             <Button color="blue-gray" ripple={true}>
               Đã điểm danh ({format(new Date(), "dd-MM-yyyy")})
             </Button>
@@ -309,7 +378,15 @@ function DocumentBank() {
       </div>
       <div>
         <div className="mx-auto px-4 py-8">
-          <div className="flex justify-center w-1/2 float-end">
+          <div className="flex justify-between w-full float-end">
+            <Button
+              className="w-40 mr-4"
+              disabled={!canConfirm}
+              hidden={userCurrent.role !== Position.SECRETARY}
+              onClick={filterDocuments}
+            >
+              Duyệt tất cả tài liệu
+            </Button>
             <div className="relative h-10 w-full min-w-[200px] mr-2">
               <div className="absolute grid w-5 h-5 top-2/4 right-3 -translate-y-2/4 place-items-center text-blue-gray-500">
                 <svg
@@ -358,7 +435,7 @@ function DocumentBank() {
               <div key={document.document_id} className="">
                 <div className="flex flex-col  lg:flex-row">
                   <div className="md:w-96 pt-8">
-                    <p className="font-bold"> {document.title}</p>
+                    <p className="font-bold text-gray-900"> {document.title}</p>
                     <p className="text-sm text-gray-600">
                       ngày:{" "}
                       {format(
@@ -366,6 +443,19 @@ function DocumentBank() {
                         "dd/MM/yyyy HH:mm"
                       )}
                     </p>
+                    <div>
+                      <Button
+                        className="w-40 mr-4 bg-cyan-500"
+                        hidden={
+                          (userCurrent.role !== Position.SECRETARY &&
+                            canConfirm) ||
+                          document.is_active
+                        }
+                        onClick={() => ActiveDocument(document)}
+                      >
+                        Duyệt tài liệu
+                      </Button>
+                    </div>
                     {IsRole([
                       Position.ADVISOR,
                       Position.SUB_TEACHER,
@@ -373,6 +463,7 @@ function DocumentBank() {
                     ]) && (
                       <div className="flex mt-2">
                         <Button
+                          hidden={userCurrent.user_id !== document.author_id}
                           onClick={() => editdocument(document.document_id)}
                           color="amber"
                           className="px-4 py-2 mr-4 rounded-md"
@@ -380,6 +471,7 @@ function DocumentBank() {
                           Sửa
                         </Button>
                         <Button
+                          hidden={userCurrent.user_id !== document.author_id}
                           color="deep-orange"
                           className="px-4 py-2 rounded-md"
                           onClick={() =>
@@ -392,7 +484,7 @@ function DocumentBank() {
                     )}
                   </div>
                   <div className="w-full bg-white shadow-md rounded-lg p-6">
-                    <div className="flex flex-wrap justify-between">
+                    <div className="flex flex-wrap justify-between  text-gray-900">
                       <Typography>Tác giả: {document.Author!.name}</Typography>
                       <a
                         href="#"
@@ -403,7 +495,7 @@ function DocumentBank() {
                       </a>
                     </div>
                     <hr className="my-3" />
-                    <Typography className="line-clamp-6">
+                    <Typography className="line-clamp-6  text-gray-900">
                       {document.description}
                     </Typography>
                   </div>

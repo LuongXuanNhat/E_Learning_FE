@@ -9,6 +9,7 @@ import {
   Rank,
   User,
 } from "@/models/User";
+import { getCookieUser } from "@/services/authService";
 import { createUser } from "@/services/service";
 import {
   Card,
@@ -20,9 +21,23 @@ import {
   input,
   Select,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function IndexPage() {
+  const [userCurent, setUserCurrent] = useState<User>({
+    user_id: 0,
+    username: "",
+    name: "",
+    cap_bac: "",
+    chuc_vu: "",
+    email: "",
+    password: "",
+    role: undefined,
+    avatar_url: null,
+    is_active: true,
+    created_at: "",
+    faculty_id: 0,
+  });
   const { alerts, addAlert } = useAlert();
   const [user, setUser] = useState<User>({
     user_id: 0,
@@ -36,6 +51,7 @@ function IndexPage() {
     avatar_url: null,
     is_active: true,
     created_at: "",
+    faculty_id: 0,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +67,12 @@ function IndexPage() {
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    const userCurrent = getCookieUser();
+    setUserCurrent(userCurrent!);
+  }, []);
+
   const validateData = () => {
     const requiredFields: (keyof User)[] = [
       "username",
@@ -122,16 +144,18 @@ function IndexPage() {
             <Typography variant="h4" color="blue-gray">
               Thêm mới tài khoản
             </Typography>
-            <a href="/quan-ly-nhan-su">
-              <Button
-                ripple={true}
-                className=""
-                type="submit"
-                variant="outlined"
-              >
-                Trở về
-              </Button>
-            </a>
+            {userCurent.role !== Position.HEAD_EDUCATION && (
+              <a href="/quan-ly-nhan-su">
+                <Button
+                  ripple={true}
+                  className=""
+                  type="submit"
+                  variant="outlined"
+                >
+                  Trở về
+                </Button>
+              </a>
+            )}
           </div>
 
           <div className="w-full flex justify-center pl-10">
@@ -166,59 +190,7 @@ function IndexPage() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-between">
-                  <div className="mx-4 w-full">
-                    <Input
-                      label="Ngày sinh"
-                      crossOrigin=""
-                      type="date"
-                      size="lg"
-                      placeholder="01/01/2000"
-                      className=" "
-                    />
-                  </div>
-                  <div className="mx-4 w-full">
-                    <Typography
-                      variant="h6"
-                      color="blue-gray"
-                      className="-mb-3"
-                    >
-                      Giới tính
-                    </Typography>
-                    <div className="flex justify-around">
-                      <Radio
-                        name="sex"
-                        color="blue"
-                        crossOrigin=""
-                        label={
-                          <Typography
-                            variant="small"
-                            color="gray"
-                            className="flex items-center font-normal"
-                          >
-                            Nam
-                          </Typography>
-                        }
-                        containerProps={{ className: "-ml-2.5" }}
-                      />
-                      <Radio
-                        name="sex"
-                        color="blue"
-                        crossOrigin=""
-                        label={
-                          <Typography
-                            variant="small"
-                            color="gray"
-                            className="flex items-center font-normal"
-                          >
-                            Nữ
-                          </Typography>
-                        }
-                        containerProps={{ className: "-ml-2.5" }}
-                      />
-                    </div>
-                  </div>
-                </div>
+
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
                     <Select
@@ -303,4 +275,7 @@ function IndexPage() {
     </div>
   );
 }
-export default MiddlewareAuthor(IndexPage, [Position.EDUCATION]);
+export default MiddlewareAuthor(IndexPage, [
+  Position.EDUCATION,
+  Position.HEAD_EDUCATION,
+]);

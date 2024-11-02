@@ -7,6 +7,7 @@ import { Position, PositionLabels, User } from "@/models/User";
 import { getCookieUser } from "@/services/authService";
 import { HomePage } from "./home";
 import Teacherclasses from "./teacherclasses";
+import { HeadEducationHome } from "./head_education";
 
 export default function Page() {
   const [isCan, setIsCan] = useState(0);
@@ -28,6 +29,8 @@ export default function Page() {
       account?.chuc_vu === PositionLabels[Position.ADVISOR]
     ) {
       setIsCan(1);
+    } else if (account.role == Position.HEAD_EDUCATION) {
+      setIsCan(4);
     } else {
       setIsCan(3);
     }
@@ -53,6 +56,8 @@ export default function Page() {
         </div>
       ) : isCan === 1 ? (
         <Teacherclasses />
+      ) : isCan === 4 ? (
+        <HeadEducationHome />
       ) : (
         <MyClass />
       )}
