@@ -814,6 +814,19 @@ export async function createAttendance(data: Attendance) {
 
 //        GRADE STUDENT SCORE POINT
 
+export async function getAllGrade(): Promise<Grade[]> {
+  const response = await fetch(apiBase + "/grades", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw errorData.message;
+  }
+  return response.json();
+}
 export async function getGradeOfClass(id: number) {
   const response = await fetch(apiBase + "/grades/" + id, {
     method: "GET",

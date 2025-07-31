@@ -10,8 +10,10 @@ import { AlertType, useAlert } from "../components/Alert/alertbase";
 import { MiddlewareAuthor } from "../../middleware/Author";
 import { Position, User } from "../../models/User";
 import { getCookieUser } from "@/services/authService";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 function FacultyManager() {
+  const [hoveredFacultyId, setHoveredFacultyId] = useState(0);
   const [faculties, setFacultys] = useState<Faculty[]>([]);
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(true);
@@ -140,6 +142,9 @@ function FacultyManager() {
           <div
             key={faculty.faculty_id}
             className="bg-white border rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300"
+            data-tooltip-id={`faculty-tooltip-${faculty.faculty_id}`}
+            onMouseEnter={() => setHoveredFacultyId(faculty.faculty_id)}
+            onMouseLeave={() => setHoveredFacultyId(0)}
           >
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center">
@@ -189,16 +194,27 @@ function FacultyManager() {
                 Xóa
               </Button>
             </div>
+            <ReactTooltip
+              id={`faculty-tooltip-${faculty.faculty_id}`}
+              place="top"
+              content={
+                faculty.Classes!.length > 0
+                  ? faculty.Classes!.map((c) => c.name).join("\n")
+                  : "Không có lớp nào"
+              }
+              style={{ whiteSpace: "pre-line" }}
+            />
           </div>
         ))}
       </div>
 
-      {/* Pagination component remains the same */}
       <Pagination
         data={faculties}
         itemsPerPageOptions={[1, 4, 8, 12, 16, 50]}
         onPageChange={setCurrentFacultys}
       />
+
+      {/* Add ReactTooltip component */}
     </div>
   );
 }

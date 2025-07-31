@@ -1,3 +1,4 @@
+import { Class } from "./Classes";
 import { User } from "./User";
 
 export interface Grade {
@@ -14,8 +15,9 @@ export interface Grade {
   summary_score: number;
   created_at: Date;
   content: string;
-  // Associations
+
   Student?: User;
+  Class?: Class;
 }
 
 export interface sub_grade {

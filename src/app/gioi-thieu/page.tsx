@@ -105,42 +105,43 @@ export default function Introduce() {
             cùng nhau đoàn kết thống nhất, khắc phục khó khăn, ra sức thi đua,
             phấn đấu hoàn thành xuất sắc nhiệm vụ được giao, xây dựng Đảng bộ
             trong sạch vững mạnh, Học viện vững mạnh toàn diện, viết tiếp truyền
-            thống Anh hùng "Chủ động sáng tạo, đoàn kết kỷ luật, khắc phục khó
-            khăn, hoàn thành nhiệm vụ" Nhà trường không ngừng nâng cao chất
-            lượng giáo dục, đào tạo đáp ứng nhu cầu trong tình hình mới, tiếp
-            thu điển hình khoa học giáo dục hiện đại, đồng thời kế thừa, lĩnh
-            hội kinh nghiệm trong công tác huấn luyện, đào tạo trong quân đội
-            ngành tình báo quốc phòng trong các đơn vị toàn quân. Tập trung đổi
-            mới nội dung trong chương trình bảo đảm tính hiệu quả xác thực nhất
-            là công tác giảng dạy, kết hợp chặt chẽ dạy học đi đôi với nghề,
-            giữa đào tạo chuyên môn, nghiệp vụ, bảo đảm học viên tốt nghiệp là
-            học viên đủ phẩm chất, năng lực hoàn thành tốt nhiệm vụ được giao.
-            Trong thời gian qua, nhà trường đã luôn tập trung xây dựng đội ngũ
-            nhà giáo, cán bộ quản lý cả về phẩm chất chính trị, đạo đức và trình
-            độ chuyên môn, nghiệp vụ. Triển khai kế hoạch phát triển đội ngũ
-            giảng viên, có chính sách phát triển, trọng dụng, tôn vinh với các
-            nhà giáo. Tạo môi trường thuận lợi để đội ngũ cán bộ, giảng viên say
-            mê giảng dạy, nghiên cứu khoa học. Tăng cường mở rộng hợp tác với
-            các học viện, nhà trường trong và ngoài quân đội, hợp tác quốc tế để
-            nâng cao trình độ cho đội ngũ cán bộ, giảng viên góp phần nâng cao
-            hơn nữa chất lượng giáo dục đào tạo trong thời gian tới. Nâng cao
-            năng lực lãnh đạo sức chiến đấu của các cấp ủy, tổ chức đảng, xây
-            dựng đảng bộ trong sạch vững mạnh. Triển khai thực hiện hiệu quả
-            theo Nghị quyết Trung ương 4 khóa XII về xây dựng Đảng gắn với việc
-            học tập, làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh, các
-            phong trào thi đua quyết thắng cuộc vận động Phát huy truyền thống,
-            cống hiến tài năng, xứng danh Bộ đội Cụ Hồ. Đẩy mạnh việc dân chủ,
-            tăng cường quản lý, duy trì nghiêm kỷ luật quân đội quy định của
-            ngành, bảo đảm bí mật, an ninh an toàn, thực hiện nền nếp chính quy,
-            kết hợp chặt chẽ xây dựng môi trường văn hóa quân sự lành mạnh, quan
-            tâm chăm lo đời sống cho cán bộ, tăng cường đoàn kết quân dân trên
-            địa bàn đóng quân. Với bề dày lịch sử truyền thống được đúc kết
-            trong xây dựng, phấn đấu và trưởng thành, Quân ủy Trung ương, Bộ
-            Quốc phòng tin tưởng rằng: "Trong thời gian tới Học viện Khoa học
-            Quân sự sẽ phát huy tốt, đoàn kết nỗ lực phấn đấu lập được nhiều
-            thành tích mới, hoàn thành xuất sắc nhiệm vụ được giao, xứng đáng là
-            đơn vị Anh hùng Lực lượng Vũ trang Nhân dân và sự tin yêu của Đảng,
-            Nhà nước, lực lượng Quân đội và Nhân dân (Việt Nam)."
+            thống Anh hùng &quot;Chủ động sáng tạo, đoàn kết kỷ luật, khắc phục
+            khó khăn, hoàn thành nhiệm vụ&quot; Nhà trường không ngừng nâng cao
+            chất lượng giáo dục, đào tạo đáp ứng nhu cầu trong tình hình mới,
+            tiếp thu điển hình khoa học giáo dục hiện đại, đồng thời kế thừa,
+            lĩnh hội kinh nghiệm trong công tác huấn luyện, đào tạo trong quân
+            đội ngành tình báo quốc phòng trong các đơn vị toàn quân. Tập trung
+            đổi mới nội dung trong chương trình bảo đảm tính hiệu quả xác thực
+            nhất là công tác giảng dạy, kết hợp chặt chẽ dạy học đi đôi với
+            nghề, giữa đào tạo chuyên môn, nghiệp vụ, bảo đảm học viên tốt
+            nghiệp là học viên đủ phẩm chất, năng lực hoàn thành tốt nhiệm vụ
+            được giao. Trong thời gian qua, nhà trường đã luôn tập trung xây
+            dựng đội ngũ nhà giáo, cán bộ quản lý cả về phẩm chất chính trị, đạo
+            đức và trình độ chuyên môn, nghiệp vụ. Triển khai kế hoạch phát
+            triển đội ngũ giảng viên, có chính sách phát triển, trọng dụng, tôn
+            vinh với các nhà giáo. Tạo môi trường thuận lợi để đội ngũ cán bộ,
+            giảng viên say mê giảng dạy, nghiên cứu khoa học. Tăng cường mở rộng
+            hợp tác với các học viện, nhà trường trong và ngoài quân đội, hợp
+            tác quốc tế để nâng cao trình độ cho đội ngũ cán bộ, giảng viên góp
+            phần nâng cao hơn nữa chất lượng giáo dục đào tạo trong thời gian
+            tới. Nâng cao năng lực lãnh đạo sức chiến đấu của các cấp ủy, tổ
+            chức đảng, xây dựng đảng bộ trong sạch vững mạnh. Triển khai thực
+            hiện hiệu quả theo Nghị quyết Trung ương 4 khóa XII về xây dựng Đảng
+            gắn với việc học tập, làm theo tư tưởng, đạo đức, phong cách Hồ Chí
+            Minh, các phong trào thi đua quyết thắng cuộc vận động Phát huy
+            truyền thống, cống hiến tài năng, xứng danh Bộ đội Cụ Hồ. Đẩy mạnh
+            việc dân chủ, tăng cường quản lý, duy trì nghiêm kỷ luật quân đội
+            quy định của ngành, bảo đảm bí mật, an ninh an toàn, thực hiện nền
+            nếp chính quy, kết hợp chặt chẽ xây dựng môi trường văn hóa quân sự
+            lành mạnh, quan tâm chăm lo đời sống cho cán bộ, tăng cường đoàn kết
+            quân dân trên địa bàn đóng quân. Với bề dày lịch sử truyền thống
+            được đúc kết trong xây dựng, phấn đấu và trưởng thành, Quân ủy Trung
+            ương, Bộ Quốc phòng tin tưởng rằng: &quot;Trong thời gian tới Học
+            viện Khoa học Quân sự sẽ phát huy tốt, đoàn kết nỗ lực phấn đấu lập
+            được nhiều thành tích mới, hoàn thành xuất sắc nhiệm vụ được giao,
+            xứng đáng là đơn vị Anh hùng Lực lượng Vũ trang Nhân dân và sự tin
+            yêu của Đảng, Nhà nước, lực lượng Quân đội và Nhân dân (Việt
+            Nam).&quot;
           </div>
         </Typography>
 

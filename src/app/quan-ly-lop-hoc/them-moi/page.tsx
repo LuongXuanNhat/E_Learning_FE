@@ -153,6 +153,15 @@ export default function IndexPage() {
     e.preventDefault();
     try {
       if (validateData()) return;
+
+      if (!scheduleSelected) {
+        addAlert(
+          AlertType.error,
+          "Vui lòng chọn ít nhất một lịch học (tiết và thứ)"
+        );
+        return;
+      }
+
       const validSchedules = scheduleSelected.filter(
         (schedule) => schedule.schedule_id !== 0 && schedule.dayOfWeek !== ""
       );

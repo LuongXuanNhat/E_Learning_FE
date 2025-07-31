@@ -195,4 +195,7 @@ function IndexPage({ params }: { params: { id: number } }) {
     </div>
   );
 }
-export default MiddlewareAuthor(IndexPage, [Position.HEAD_EDUCATION]);
+export default MiddlewareAuthor(IndexPage, [
+  Position.EDUCATION,
+  Position.HEAD_EDUCATION,
+]);
