@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Select, Option, Input } from "@material-tailwind/react";
 import { Schedule } from "@/models/Schedule";
 import { ClassSchedule } from "@/models/ClassSchedule";
 
 interface ScheduleSelectionProps {
   schedules: Schedule[];
+  selectedSchedules?: ClassSchedule[];
   onScheduleChange: (scheduleSelections: ClassSchedule[]) => void;
 }
 const DAYS_OF_WEEK = [
@@ -18,6 +19,7 @@ const DAYS_OF_WEEK = [
 ];
 const ScheduleSelection: React.FC<ScheduleSelectionProps> = ({
   schedules,
+  selectedSchedules,
   onScheduleChange,
 }) => {
   const [scheduleSelections, setScheduleSelections] = useState<ClassSchedule[]>(
@@ -42,6 +44,12 @@ const ScheduleSelection: React.FC<ScheduleSelectionProps> = ({
       },
     ]);
   };
+
+  useEffect(() => {
+    if (selectedSchedules && selectedSchedules.length > 0) {
+      setScheduleSelections(selectedSchedules);
+    }
+  }, [selectedSchedules]);
 
   const handleRemoveRow = (indexToRemove: number) => {
     setScheduleSelections((prev) =>

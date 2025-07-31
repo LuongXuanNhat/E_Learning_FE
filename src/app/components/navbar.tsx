@@ -129,6 +129,18 @@ export function StickyNavbar() {
         </Typography>
       ) : null}
       {isClient && IsRole([Position.SECRETARY]) ? (
+        <Typography
+          as="li"
+          variant="small"
+          color="blue"
+          className="p-1 font-bold"
+        >
+          <a href="/xem-diem" className="flex items-center">
+            Xem điểm
+          </a>
+        </Typography>
+      ) : null}
+      {isClient && IsRole([Position.SECRETARY]) ? (
         <div className="flex">
           <Typography
             as="li"
@@ -410,6 +422,11 @@ const navListMenuItems = [
   {
     title: "Quản lý môn học",
     url: "/quan-ly-mon-hoc",
+  },
+
+  {
+    title: "Xem điểm",
+    url: "/xem-diem",
   },
 ];
 

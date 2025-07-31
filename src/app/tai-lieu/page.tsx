@@ -111,11 +111,15 @@ function DocumentBank() {
   };
   const fetchDocumentData = async () => {
     const data = await fetchDocuments();
-    if (userCurrent.role !== Position.SECRETARY) {
+    const userCurrentA = getCookieUser();
+
+    if (userCurrentA?.role !== Position.SECRETARY) {
       const docs = data.filter((doc) => doc.is_active === true);
+      console.log(docs);
       setDocuments(docs);
       setCurrentDocuments(docs);
     } else {
+      console.log(data);
       setDocuments(data);
       setCurrentDocuments(data);
     }
@@ -233,6 +237,8 @@ function DocumentBank() {
           }
         })
       );
+
+      addAlert(AlertType.success, "Đã duyệt tất cả");
     } catch (error) {
       addAlert(AlertType.error, "Có lỗi khi lọc tài liệu");
     }
@@ -381,7 +387,6 @@ function DocumentBank() {
           <div className="flex justify-between w-full float-end">
             <Button
               className="w-40 mr-4"
-              disabled={!canConfirm}
               hidden={userCurrent.role !== Position.SECRETARY}
               onClick={filterDocuments}
             >

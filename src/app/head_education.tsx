@@ -58,6 +58,14 @@ export function HeadEducationHome() {
               Danh sách sinh viên
             </a>
           </li>
+          <li className="my-10 mx-3">
+            <a
+              href="/xem-diem"
+              className="rounded-md px-10 py-5 shadow  text-gray-900 transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white hover:shadow-lg"
+            >
+              Danh sách điểm
+            </a>
+          </li>
         </ul>
       </div>
     </div>

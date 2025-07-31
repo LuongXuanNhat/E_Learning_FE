@@ -41,6 +41,7 @@ function IndexPage() {
     avatar_url: null,
     is_active: true,
     created_at: "",
+    faculty_id: 0,
   });
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

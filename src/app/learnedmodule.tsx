@@ -181,10 +181,33 @@ export function MyLearnedModule() {
                   </div>
 
                   <div className="space-y-2 text-gray-600 flex-grow">
-                    {classItem.Class?.schedule && (
-                      <div className="flex items-center gap-2">
-                        <span>Lịch học: {classItem.Class.schedule}</span>
+                    {classItem.Class?.ClassSchedules &&
+                    classItem.Class?.ClassSchedules.length > 0 ? (
+                      <div>
+                        {classItem.Class?.ClassSchedules.map(
+                          (classSchedule) => (
+                            <div
+                              key={classSchedule.class_schedule_id}
+                              className="mb-2 last:mb-0"
+                            >
+                              <p className="font-semibold text-blue-gray-900">
+                                {classSchedule.Schedule?.name || "Không có tên"}
+                              </p>
+                              <div className="flex">
+                                <p className="text-sm text-blue-gray-600 mr-4">
+                                  {classSchedule.Schedule?.description ||
+                                    "Không có mô tả"}
+                                </p>
+                                <p className="text-sm text-blue-gray-500">
+                                  Thứ: {classSchedule.dayOfWeek}
+                                </p>
+                              </div>
+                            </div>
+                          )
+                        )}
                       </div>
+                    ) : (
+                      <p className="text-gray-500  text-sm">Chưa có lịch học</p>
                     )}
 
                     <div className="flex items-center gap-2 justify-between">

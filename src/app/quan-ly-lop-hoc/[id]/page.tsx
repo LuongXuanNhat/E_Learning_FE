@@ -9,6 +9,7 @@ import {
   createClass,
   fetchCourses,
   fetchFaculties,
+  fetchSchedules,
   fetchUsers,
   getClassById,
   updateClass,
@@ -26,6 +27,9 @@ import {
 import { format } from "date-fns";
 import React from "react";
 import { useEffect, useState } from "react";
+import ScheduleSelection from "../them-moi/ScheduleSelection";
+import { Schedule } from "@/models/Schedule";
+import { ClassSchedule } from "@/models/ClassSchedule";
 
 export default function IndexPage({ params }: { params: { id: number } }) {
   const { addAlert } = useAlert();
@@ -39,22 +43,32 @@ export default function IndexPage({ params }: { params: { id: number } }) {
     schedule: "",
     created_at: "",
     faculty_id: 0,
+    ClassSchedules: [],
   });
+  const [schedules, setSchedules] = React.useState<Schedule[]>([]);
   const [courses, setCourses] = React.useState<Course[]>([]);
   const [users, setUsers] = React.useState<User[]>([]);
   const [state, setState] = React.useState<boolean>();
   const [dataFaculties, setDataFaculty] = useState<Faculty[]>([]);
+  const [scheduleSelected, setScheduleSelected] = React.useState<
+    ClassSchedule[]
+  >([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const dataCourses = await fetchCourses();
       setCourses(dataCourses);
 
+      const dataSche = await fetchSchedules();
+      setSchedules(dataSche);
+
       const dataUsers = await fetchUsers();
       setUsers(dataUsers);
 
       const dataClass = await getClassById(params.id);
       setClass(dataClass);
+
+      setScheduleSelected(classes.ClassSchedules!);
       setTimeout(() => {
         if (dataClass.course_id == null) {
           setState(true);
@@ -74,6 +88,10 @@ export default function IndexPage({ params }: { params: { id: number } }) {
     fetchData();
     fetchFaculty();
   }, []);
+
+  const handleScheduleChange = (selections: ClassSchedule[]) => {
+    setScheduleSelected(selections);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -133,8 +151,35 @@ export default function IndexPage({ params }: { params: { id: number } }) {
     e.preventDefault();
     try {
       if (validateData()) return;
-      console.log(classes);
-      await updateClass(classes);
+
+      if (!scheduleSelected) {
+        addAlert(
+          AlertType.error,
+          "Vui lòng chọn ít nhất một lịch học (tiết và thứ)"
+        );
+        return;
+      }
+      const validSchedules = scheduleSelected.filter(
+        (schedule) => schedule.schedule_id !== 0 && schedule.dayOfWeek !== ""
+      );
+
+      if (validSchedules.length === 0) {
+        addAlert(
+          AlertType.error,
+          "Vui lòng chọn ít nhất một lịch học (tiết và thứ)"
+        );
+        return;
+      }
+
+      const classToCreate: Class = {
+        ...classes,
+        ClassSchedules: validSchedules.map((schedule) => ({
+          ...schedule,
+          class_id: 0,
+        })),
+      };
+
+      await updateClass(classToCreate);
       addAlert(
         AlertType.success,
         `Cập nhập lớp học: ${classes.name} thành công`
@@ -250,6 +295,28 @@ export default function IndexPage({ params }: { params: { id: number } }) {
                       ))}
                     </Select>
                   </div>
+                  <div className="mx-4 w-full">
+                    <Select
+                      name="course_id"
+                      label="Chọn học phần"
+                      placeholder="Chọn học phần"
+                      key={classes.course_id}
+                      value={classes.course_id?.toString()}
+                      onChange={(value: any) =>
+                        handleSelectChange("course_id", value)
+                      }
+                      disabled={state}
+                    >
+                      {courses.map((course) => (
+                        <Option
+                          key={course.course_id}
+                          value={course.course_id.toString()}
+                        >
+                          {course.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
                 </div>
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">
@@ -289,43 +356,12 @@ export default function IndexPage({ params }: { params: { id: number } }) {
                   </div>
                 </div>
 
-                <div className="flex justify-between">
-                  <div className="mx-4 w-full">
-                    <Select
-                      name="course_id"
-                      label="Chọn khoa/viện (*)"
-                      placeholder="Chọn khoa/viện"
-                      key={classes.course_id}
-                      value={classes.course_id?.toString()}
-                      onChange={(value: any) =>
-                        handleSelectChange("course_id", value)
-                      }
-                      disabled={state}
-                    >
-                      {courses.map((course) => (
-                        <Option
-                          key={course.course_id}
-                          value={course.course_id.toString()}
-                        >
-                          {course.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="mx-4 w-full">
-                    <Input
-                      name="schedule"
-                      label="Lịch dạy (*)"
-                      crossOrigin=""
-                      type="text"
-                      size="lg"
-                      placeholder=""
-                      className="max-h-10"
-                      disabled={state}
-                      value={classes.schedule!}
-                      onChange={handleInputChange}
-                    />
-                  </div>
+                <div className="w-full">
+                  <ScheduleSelection
+                    schedules={schedules}
+                    selectedSchedules={classes.ClassSchedules!}
+                    onScheduleChange={handleScheduleChange}
+                  />
                 </div>
                 <div className="flex justify-between">
                   <div className="mx-4 w-full">

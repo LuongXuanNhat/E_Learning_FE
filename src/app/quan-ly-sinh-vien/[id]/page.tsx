@@ -252,68 +252,68 @@ function IndexPage({ params }: { params: { id: number } }) {
                         </Option>
                       ))}
                     </Select>
-                   
-                </div>
-                <div className="flex justify-between">
-                  <div className="mx-4 w-full">
-                    <Select
-                      name="chuc_vu"
-                      label="Chọn chức vụ (*)"
-                      value={user.chuc_vu}
-                      disabled={true}
-                    >
-                      {Object.values(Position).map((chuc_vu) => (
-                        <Option key={chuc_vu} value={PositionLabels[chuc_vu]}>
-                          {PositionLabels[chuc_vu]}
-                        </Option>
-                      ))}
-                    </Select>
                   </div>
-                  <div className="mx-4 w-full">
-                    <Select
-                      name="cap_bac"
-                      label="Chọn cấp bậc (*)"
-                      value={user.cap_bac}
-                      onChange={(value: any) =>
-                        handleSelectChange("cap_bac", value)
-                      }
-                    >
-                      {Object.values(Rank).map((cap_bac) => (
-                        <Option key={cap_bac} value={cap_bac}>
-                          {cap_bac}
-                        </Option>
-                      ))}
-                    </Select>
+                  <div className="flex justify-between">
+                    <div className="mx-4 w-full">
+                      <Select
+                        name="chuc_vu"
+                        label="Chọn chức vụ (*)"
+                        value={user.chuc_vu}
+                        disabled={true}
+                      >
+                        {Object.values(Position).map((chuc_vu) => (
+                          <Option key={chuc_vu} value={PositionLabels[chuc_vu]}>
+                            {PositionLabels[chuc_vu]}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="mx-4 w-full">
+                      <Select
+                        name="cap_bac"
+                        label="Chọn cấp bậc (*)"
+                        value={user.cap_bac}
+                        onChange={(value: any) =>
+                          handleSelectChange("cap_bac", value)
+                        }
+                      >
+                        {Object.values(Rank).map((cap_bac) => (
+                          <Option key={cap_bac} value={cap_bac}>
+                            {cap_bac}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
                   </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="mx-4 w-full">
-                    <Input
-                      name="email"
-                      label="Email (*)"
-                      type="email"
-                      crossOrigin=""
-                      size="lg"
-                      placeholder="nguyenvana@gmail.com"
-                      className=" "
-                      value={user.email}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="mx-4 w-full">
-                    <Input
-                      readOnly
-                      disabled
-                      name="password"
-                      label="Mật khẩu (*)"
-                      crossOrigin=""
-                      type="passwword"
-                      size="lg"
-                      placeholder="Nhập cấp bậc"
-                      className=" "
-                      value={user.password}
-                      onChange={handleInputChange}
-                    />
+                  <div className="flex justify-between">
+                    <div className="mx-4 w-full">
+                      <Input
+                        name="email"
+                        label="Email (*)"
+                        type="email"
+                        crossOrigin=""
+                        size="lg"
+                        placeholder="nguyenvana@gmail.com"
+                        className=" "
+                        value={user.email}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="mx-4 w-full">
+                      <Input
+                        readOnly
+                        disabled
+                        name="password"
+                        label="Mật khẩu (*)"
+                        crossOrigin=""
+                        type="passwword"
+                        size="lg"
+                        placeholder="Nhập cấp bậc"
+                        className=" "
+                        value={user.password}
+                        onChange={handleInputChange}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
